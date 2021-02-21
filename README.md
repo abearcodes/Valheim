@@ -31,7 +31,7 @@ Drop the `.dll` into `<GameLocation>\BepInEx\plugins`
 
 Please create an issue in the GitHub repo here:
 
-https://github.com/abearcodes/Valheim.CraftingWithContainers/issues/new
+https://github.com/abearcodes/Valheim/issues/new
 
 ## Configuration
 
