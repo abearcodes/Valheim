@@ -18,8 +18,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers
         
         private void Awake()
         {
-            Plugin.Settings.BindConfig(Config);
-            var harmony = new Harmony("ABearCodes.CraftingWithContainers");
+            Settings.BindConfig(Config);
+            var harmony = new Harmony("ABearCodes.Valheim.CraftingWithContainers");
             harmony.PatchAll();
         }
     }

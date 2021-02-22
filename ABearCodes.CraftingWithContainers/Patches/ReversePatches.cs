@@ -1,7 +1,7 @@
 ﻿using System;
 using HarmonyLib;
 
-namespace ABearCodes.Valheim.CraftingWithContainers
+namespace ABearCodes.Valheim.CraftingWithContainers.Patches
 {
     [HarmonyPatch]
     public static class ReversePatches

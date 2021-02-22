@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABearCodes.CraftingWithContainers", "ABearCodes.CraftingWithContainers\ABearCodes.CraftingWithContainers.csproj", "{9A6448B7-AF54-423C-A162-281293225599}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABearCodes.Valheim.CraftingWithContainers", "ABearCodes.Valheim.CraftingWithContainers\ABearCodes.Valheim.CraftingWithContainers.csproj", "{9A6448B7-AF54-423C-A162-281293225599}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
