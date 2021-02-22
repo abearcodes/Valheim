@@ -84,7 +84,11 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
                     OwningPiece = GetContainerOwningPiece(container)
                 })
                 .Where(context =>
-                    ReversePatches.ContainerCheckAccess(context.Container, player.GetPlayerID())
+                    // usually all containers have an owning "Piece" either themselves, or 
+                    // some object within the parent. If they don't it's a weird container
+                    // and we don't support it anyway, i.e. tombstones
+                    context.OwningPiece != null
+                    && ReversePatches.ContainerCheckAccess(context.Container, player.GetPlayerID())
                     && IsContainerInRange(craftingStation, context.Container)
                     && IsContainerOnAllowedPiece(context.OwningPiece)
                     && IsContainerOwningPiecePlacedByPlayer(context.OwningPiece))
