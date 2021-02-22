@@ -5,8 +5,8 @@ using HarmonyLib;
 namespace ABearCodes.Valheim.CraftingWithContainers
 {
     [BepInPlugin("com.github.abearcodes.valheim.craftingwithcontainers", 
-        "Crafting with Containers plugin",
-        "1.0.0.0")]
+        "Crafting with Containers",
+        "1.0.2")]
     public partial class Plugin : BaseUnityPlugin
     {
         public Plugin()
