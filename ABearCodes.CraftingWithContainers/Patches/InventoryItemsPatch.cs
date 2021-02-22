@@ -60,8 +60,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
             foreach (var inventory in allAccessibleInventories)
             {
                 var currentInventoryCount = ReversePatches.InventoryCountItems(inventory, name);
-                var itemsToTake = currentInventoryCount <= leftToRemove
-                    ? currentInventoryCount % leftToRemove
+                var itemsToTake = currentInventoryCount < leftToRemove
+                    ? currentInventoryCount
                     : leftToRemove;
                 ReversePatches.InventoryRemoveItemByString(inventory, name, itemsToTake);
                 leftToRemove -= itemsToTake;
