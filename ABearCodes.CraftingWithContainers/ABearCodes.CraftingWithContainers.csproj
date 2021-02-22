@@ -292,8 +292,10 @@
         <Compile Include="Tracking\TrackContainersWhenPlayerUsesCraftingStationPatch.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="Resources\icon.png" />
-      <Content Include="Resources\manifest.json" />
+      <Content Include="README.md" />
+      <Content Include="ThunderStoreResources\icon.png" />
+      <Content Include="ThunderStoreResources\manifest.json" />
+      <Content Include="ThunderStoreResources\README.md" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
