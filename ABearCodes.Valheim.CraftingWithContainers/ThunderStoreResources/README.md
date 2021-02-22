@@ -82,8 +82,10 @@ The available settings are as follows:
  
  ### 1.0.2
  
- Fixed a bug of not removing items when the amount of items is the exact
- one needed. 
+ - Fixed a bug of not removing items when the amount of items is the exact
+ one needed.
+ 
+ - Fixed a bug where tracker would attempt to remove effects from non existing entries 
  
  ### 1.0.1
  

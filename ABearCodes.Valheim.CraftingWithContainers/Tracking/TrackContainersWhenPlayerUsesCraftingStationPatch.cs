@@ -45,11 +45,10 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
             else
             {
                 Plugin.Log.LogDebug($"{__instance.GetPlayerName()} no longer using station, cleaning up");
-                if (!InventoryTracker.ExpandedPlayerInventories.TryGetValue(__instance.GetHashCode(),
-                    out var extraInventories))
+                if (!InventoryTracker.ExpandedPlayerInventories.TryGetValue(__instance.GetInventory().GetHashCode(), out var linkedInventories))
                     return;
                 
-                foreach (var effect in extraInventories.Effects) Object.Destroy(effect);
+                foreach (var effect in linkedInventories.Effects) Object.Destroy(effect);
                 InventoryTracker.ExpandedPlayerInventories.Remove(__instance.GetInventory().GetHashCode());
             }
         }
