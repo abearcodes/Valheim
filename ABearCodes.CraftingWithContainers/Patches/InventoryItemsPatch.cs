@@ -11,7 +11,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
         // ReSharper disable once UnusedMember.Global
         public static void Postfix(ref Inventory __instance, string name, ref int __result)
         {
-            if (!Valheim.CraftingWithContainers.Plugin.Settings.CraftingWithContainersEnabled.Value) return;
+            if (!Plugin.Settings.CraftingWithContainersEnabled.Value) return;
             if (!InventoryTracker.ExpandedPlayerInventories.TryGetValue(__instance.GetHashCode(),
                 out var extraInventories))
                 return;
@@ -28,16 +28,16 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
         // ReSharper disable once UnusedMember.Global
         public static bool Prefix(ref Inventory __instance, string name, int amount)
         {
-            if (!Valheim.CraftingWithContainers.Plugin.Settings.CraftingWithContainersEnabled.Value) return true;
+            if (!Plugin.Settings.CraftingWithContainersEnabled.Value) return true;
             if (!InventoryTracker.ExpandedPlayerInventories
                 .TryGetValue(__instance.GetHashCode(), out var extraInventories))
                 return true;
 
             var allAccessibleInventories = MergeInventories(extraInventories);
-            Valheim.CraftingWithContainers.Plugin.Log.LogDebug($"Received {allAccessibleInventories.Count} to remove {amount} of {name}");
+            Plugin.Log.LogDebug($"Received {allAccessibleInventories.Count} to remove {amount} of {name}");
             IterateAndRemoveItemsFromInventories(name, amount, allAccessibleInventories);
 
-            Valheim.CraftingWithContainers.Plugin.Log.LogDebug($"Removed {amount} of {name}");
+            Plugin.Log.LogDebug($"Removed {amount} of {name}");
             return false;
         }
 
@@ -46,7 +46,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
             var allAccessibleInventories = extraInventories.Containers
                 .Select(container => container.GetInventory())
                 .ToList();
-            if (Valheim.CraftingWithContainers.Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
+            if (Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
                 allAccessibleInventories.Insert(0, extraInventories.Player.GetInventory());
             else
                 allAccessibleInventories.Add(extraInventories.Player.GetInventory());
@@ -65,7 +65,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
                     : leftToRemove;
                 ReversePatches.InventoryRemoveItemByString(inventory, name, itemsToTake);
                 leftToRemove -= itemsToTake;
-                Valheim.CraftingWithContainers.Plugin.Log.LogDebug($"Removed {itemsToTake} of {amount} from inv {inventory.GetHashCode()}");
+                Plugin.Log.LogDebug($"Removed {itemsToTake} of {amount} from inv {inventory.GetHashCode()}");
 
                 if (leftToRemove == 0)
                     break;

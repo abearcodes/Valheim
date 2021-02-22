@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using HarmonyLib;
 using UnityEngine;
 
@@ -30,11 +29,13 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
         {
             if (station != null)
             {
+                // only disable additions. in the case that somebody triggers 
+                if (!Plugin.Settings.CraftingWithContainersEnabled.Value) return;
                 var containersInRange = FindAllowedContainersInCraftingStationRange(__instance, station).ToList();
 
-                Valheim.CraftingWithContainers.Plugin.Log.LogDebug($"{__instance.GetPlayerName()} using {station.name}. " +
-                                                                   $"Expanding with {containersInRange.Count}");
-                var effects = Valheim.CraftingWithContainers.Plugin.Settings.ShowStationExtensionEffect.Value
+                Plugin.Log.LogDebug($"{__instance.GetPlayerName()} using {station.name}. " +
+                                    $"Expanding with {containersInRange.Count}");
+                var effects = Plugin.Settings.ShowStationExtensionEffect.Value
                     ? SpawnEffects(station, containersInRange)
                     : new List<GameObject>();
                 InventoryTracker.ExpandedPlayerInventories[__instance.GetInventory().GetHashCode()] =
@@ -42,11 +43,12 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
             }
             else
             {
-                Valheim.CraftingWithContainers.Plugin.Log.LogDebug($"{__instance.GetPlayerName()} no longer using station, cleaning up");
-                var effects = InventoryTracker
-                    .ExpandedPlayerInventories[__instance.GetInventory().GetHashCode()]
-                    .Effects;
-                foreach (var effect in effects) Object.Destroy(effect);
+                Plugin.Log.LogDebug($"{__instance.GetPlayerName()} no longer using station, cleaning up");
+                if (!InventoryTracker.ExpandedPlayerInventories.TryGetValue(__instance.GetHashCode(),
+                    out var extraInventories))
+                    return;
+                
+                foreach (var effect in extraInventories.Effects) Object.Destroy(effect);
                 InventoryTracker.ExpandedPlayerInventories.Remove(__instance.GetInventory().GetHashCode());
             }
         }
@@ -58,7 +60,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
             var stationPosition = station.transform.position;
             foreach (var container in containersInRange)
             {
-                Valheim.CraftingWithContainers.Plugin.Log.LogDebug($"Attaching effect {container.name} ({container.GetHashCode()})");
+                Plugin.Log.LogDebug($"Attaching effect {container.name} ({container.GetHashCode()})");
                 var containerPosition = container.transform.position + Vector3.up;
                 var effect = Object.Instantiate(ConnectionPrefab, containerPosition, Quaternion.identity);
                 var effectPosition = stationPosition - containerPosition;
@@ -98,8 +100,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
 
         private static bool IsContainerOnAllowedPiece(Piece owningPiece)
         {
-            return !Valheim.CraftingWithContainers.Plugin.Settings.ShouldFilterByContainerPieceNames.Value ||
-                   Valheim.CraftingWithContainers.Plugin.Settings.AllowedContainerLookupPieceNamesAsList
+            return !Plugin.Settings.ShouldFilterByContainerPieceNames.Value ||
+                   Plugin.Settings.AllowedContainerLookupPieceNamesAsList
                        .Contains(owningPiece.m_name);
         }
 
@@ -116,7 +118,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
 
         private static float CalculateRange(CraftingStation craftingStation)
         {
-            return craftingStation.m_rangeBuild * Valheim.CraftingWithContainers.Plugin.Settings.ContainerLookupRangeMultiplier.Value;
+            return craftingStation.m_rangeBuild * Plugin.Settings.ContainerLookupRangeMultiplier.Value;
         }
     }
 }
