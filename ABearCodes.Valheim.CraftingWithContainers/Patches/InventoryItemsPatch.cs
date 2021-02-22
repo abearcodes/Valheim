@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using HarmonyLib;
 
@@ -30,46 +31,59 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
         {
             if (!Plugin.Settings.CraftingWithContainersEnabled.Value) return true;
             if (!InventoryTracker.ExpandedPlayerInventories
-                .TryGetValue(__instance.GetHashCode(), out var extraInventories))
+                .TryGetValue(__instance.GetHashCode(), out var linkedInventories))
                 return true;
 
-            var allAccessibleInventories = MergeInventories(extraInventories);
-            Plugin.Log.LogDebug($"Received {allAccessibleInventories.Count} to remove {amount} of {name}");
-            IterateAndRemoveItemsFromInventories(name, amount, allAccessibleInventories);
-
+            
+            Plugin.Log.LogDebug($"Received {linkedInventories.Containers.Count() + 1} to remove {amount} of {name}");
+            IterateAndRemoveItemsFromInventories(linkedInventories, name, amount);
             Plugin.Log.LogDebug($"Removed {amount} of {name}");
             return false;
         }
 
-        private static List<Inventory> MergeInventories(InventoryTracker.LinkedInventories extraInventories)
-        {
-            var allAccessibleInventories = extraInventories.Containers
-                .Select(container => container.GetInventory())
-                .ToList();
-            if (Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
-                allAccessibleInventories.Insert(0, extraInventories.Player.GetInventory());
-            else
-                allAccessibleInventories.Add(extraInventories.Player.GetInventory());
-            return allAccessibleInventories;
-        }
-
-        private static void IterateAndRemoveItemsFromInventories(string name, int amount,
-            List<Inventory> allAccessibleInventories)
+        private static void IterateAndRemoveItemsFromInventories(InventoryTracker.LinkedInventories linkedInventories,
+            string name, int amount)
         {
             var leftToRemove = amount;
-            foreach (var inventory in allAccessibleInventories)
+            if (Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
             {
-                var currentInventoryCount = ReversePatches.InventoryCountItems(inventory, name);
-                var itemsToTake = currentInventoryCount < leftToRemove
-                    ? currentInventoryCount
-                    : leftToRemove;
-                ReversePatches.InventoryRemoveItemByString(inventory, name, itemsToTake);
-                leftToRemove -= itemsToTake;
-                Plugin.Log.LogDebug($"Removed {itemsToTake} of {amount} from inv {inventory.GetHashCode()}");
-
+                Plugin.Log.LogDebug($"Taking from player first for order {name} ({amount})");
+                leftToRemove = RemoveFromInventory(linkedInventories.Player.GetInventory(), name, amount);
+                Plugin.Log.LogDebug($"Left to remove {leftToRemove}");
+            }
+            foreach (var container in linkedInventories.Containers)
+            {
+                leftToRemove = RemoveFromInventory(container.GetInventory(), name, leftToRemove);
+                UpdateContainerNetworkData(linkedInventories.Player, container);
                 if (leftToRemove == 0)
                     break;
             }
+            if (!Plugin.Settings.TakeFromPlayerInventoryFirst.Value && leftToRemove > 0)
+            {
+                RemoveFromInventory(linkedInventories.Player.GetInventory(), name, amount);
+            }
+        }
+
+        public static void UpdateContainerNetworkData(Player player, Container container)
+        {
+            var containerZNewView = (ZNetView) (typeof(Container).GetField("m_nview", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.GetValue(container));
+            ReversePatches.ContainerSave(container);
+            var containerUid = containerZNewView.GetZDO().m_uid;
+            ZDOMan.instance.ForceSendZDO(player.GetPlayerID(), containerUid);
+            containerZNewView.GetZDO().SetOwner(player.GetPlayerID());
+        }
+
+        private static int RemoveFromInventory(Inventory inventory, string name, int leftToRemove)
+        {
+            var currentInventoryCount = ReversePatches.InventoryCountItems(inventory, name);
+            var itemsToTake = currentInventoryCount < leftToRemove
+                ? currentInventoryCount
+                : leftToRemove;
+            ReversePatches.InventoryRemoveItemByString(inventory, name, itemsToTake);
+            leftToRemove -= itemsToTake;
+            Plugin.Log.LogDebug($"Removed {itemsToTake} from inv {inventory.GetHashCode()}");
+            return leftToRemove;
         }
     }
 }

@@ -26,7 +26,15 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
         [HarmonyPatch(typeof(Container), "CheckAccess", typeof(long))]
         public static bool ContainerCheckAccess(Container __instance, long playerID)
         {
-            // ContainerCheck is private by default
+            // Container.Check is private by default
+            throw new NotImplementedException("Stub");
+        }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(Container), "Save")]
+        public static void ContainerSave(Container __instance)
+        {
+            // Container.Save is private by default
             throw new NotImplementedException("Stub");
         }
     }

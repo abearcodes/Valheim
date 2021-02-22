@@ -79,6 +79,11 @@ The available settings are as follows:
 
  ## Changelog
  
+ ### 1.0.3
+  
+ - Partial multiplayer workaround for containers not updating. Does not fix: ships, moving carts,
+ dragging resources at the last possible second.    
+ 
  ### 1.0.2
  
  - Fixed a bug of not removing items when the amount of items is the exact
