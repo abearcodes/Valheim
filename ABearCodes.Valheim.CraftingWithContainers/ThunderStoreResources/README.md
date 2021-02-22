@@ -76,8 +76,7 @@ The available settings are as follows:
     The value for this setting is a comma separated list of identifiers.     
      
     By default it's disabled and all containers are considered when crafting. 
- 
- 
+
  ## Changelog
  
  ### 1.0.2
