@@ -24,17 +24,32 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
 
         [HarmonyReversePatch]
         [HarmonyPatch(typeof(Container), "CheckAccess", typeof(long))]
-        public static bool ContainerCheckAccess(Container __instance, long playerID)
+        public static bool CheckAccess(this Container instance, long playerID)
         {
-            // Container.Check is private by default
+            // Container.CheckAccess is private by default
+            throw new NotImplementedException("Stub");
+        }
+        
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(Container), "Save")]
+        public static void Save(this Container instance)
+        {
             throw new NotImplementedException("Stub");
         }
 
         [HarmonyReversePatch]
-        [HarmonyPatch(typeof(Container), "Save")]
-        public static void ContainerSave(Container __instance)
+        [HarmonyPatch(typeof(Inventory), "Changed")]
+        public static void Changed(this Inventory instance)
         {
-            // Container.Save is private by default
+            throw new NotImplementedException("Stub");
+        }
+        
+        
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(InventoryGui), "UpdateCraftingPanel")]
+        public static void UpdateCraftingPanel(this InventoryGui instance, bool focus)
+        {
+            // Container.Changed is private by default
             throw new NotImplementedException("Stub");
         }
     }

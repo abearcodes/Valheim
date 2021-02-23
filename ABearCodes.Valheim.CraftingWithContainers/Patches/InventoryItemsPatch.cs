@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿
 using System.Linq;
 using System.Reflection;
-using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using HarmonyLib;
 
 namespace ABearCodes.Valheim.CraftingWithContainers.Patches
@@ -10,14 +9,15 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
     public class CountConnectedInventoriesWhenCraftingPatch
     {
         // ReSharper disable once UnusedMember.Global
-        public static void Postfix(ref Inventory __instance, string name, ref int __result)
+        public static void Postfix(Inventory __instance, string name, ref int __result)
         {
             if (!Plugin.Settings.CraftingWithContainersEnabled.Value) return;
-            if (!InventoryTracker.ExpandedPlayerInventories.TryGetValue(__instance.GetHashCode(),
-                out var extraInventories))
-                return;
-            var sum = new[] {extraInventories.Player.GetInventory()}
-                .Concat(extraInventories.Containers.Select(container => container.GetInventory()))
+            var craftingLock = Tracking.Tracker.FindLockByPlayer(__instance);
+            if (craftingLock == null) return;
+
+            var sum = new[] {craftingLock.Player.GetInventory()}
+                .Concat(craftingLock.Entries.Select(entry => entry.Container.GetInventory()))
+                .Where(entry => entry != null)
                 .Sum(inventory => ReversePatches.InventoryCountItems(inventory, name));
             __result = sum;
         }
@@ -27,53 +27,40 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
     public class RemoveItemsFromConnectedInventoriesWhenCraftingPatch
     {
         // ReSharper disable once UnusedMember.Global
-        public static bool Prefix(ref Inventory __instance, string name, int amount)
+        public static bool Prefix(Inventory __instance, string name, int amount)
         {
             if (!Plugin.Settings.CraftingWithContainersEnabled.Value) return true;
-            if (!InventoryTracker.ExpandedPlayerInventories
-                .TryGetValue(__instance.GetHashCode(), out var linkedInventories))
-                return true;
-
-            
-            Plugin.Log.LogDebug($"Received {linkedInventories.Containers.Count() + 1} to remove {amount} of {name}");
-            IterateAndRemoveItemsFromInventories(linkedInventories, name, amount);
+            var craftingLock = Tracking.Tracker.CraftingPlayers.Find(entry =>
+                entry.Player.GetInventory().GetHashCode() == __instance.GetHashCode());
+            if (craftingLock == null) return true;
+            Plugin.Log.LogDebug($"Received {craftingLock.Entries.Count() + 1} to remove {amount} of {name}");
+            IterateAndRemoveItemsFromInventories(craftingLock, name, amount);
             Plugin.Log.LogDebug($"Removed {amount} of {name}");
             return false;
         }
 
-        private static void IterateAndRemoveItemsFromInventories(InventoryTracker.LinkedInventories linkedInventories,
+        private static void IterateAndRemoveItemsFromInventories(Tracking.Tracker.CraftingLock craftingLock,
             string name, int amount)
         {
             var leftToRemove = amount;
             if (Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
             {
                 Plugin.Log.LogDebug($"Taking from player first for order {name} ({amount})");
-                leftToRemove = RemoveFromInventory(linkedInventories.Player.GetInventory(), name, amount);
+                leftToRemove = RemoveFromInventory(craftingLock.Player.GetInventory(), name, amount);
                 Plugin.Log.LogDebug($"Left to remove {leftToRemove}");
             }
-            foreach (var container in linkedInventories.Containers)
+            foreach (var container in craftingLock.Entries.Select(entry => entry.Container))
             {
                 leftToRemove = RemoveFromInventory(container.GetInventory(), name, leftToRemove);
-                UpdateContainerNetworkData(linkedInventories.Player, container);
                 if (leftToRemove == 0)
                     break;
             }
             if (!Plugin.Settings.TakeFromPlayerInventoryFirst.Value && leftToRemove > 0)
             {
-                RemoveFromInventory(linkedInventories.Player.GetInventory(), name, amount);
+                RemoveFromInventory(craftingLock.Player.GetInventory(), name, amount);
             }
         }
-
-        public static void UpdateContainerNetworkData(Player player, Container container)
-        {
-            var containerZNewView = (ZNetView) (typeof(Container).GetField("m_nview", BindingFlags.Instance | BindingFlags.NonPublic)
-                ?.GetValue(container));
-            ReversePatches.ContainerSave(container);
-            var containerUid = containerZNewView.GetZDO().m_uid;
-            ZDOMan.instance.ForceSendZDO(player.GetPlayerID(), containerUid);
-            containerZNewView.GetZDO().SetOwner(player.GetPlayerID());
-        }
-
+        
         private static int RemoveFromInventory(Inventory inventory, string name, int leftToRemove)
         {
             var currentInventoryCount = ReversePatches.InventoryCountItems(inventory, name);
