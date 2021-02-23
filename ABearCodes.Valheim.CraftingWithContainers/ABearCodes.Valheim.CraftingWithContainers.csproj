@@ -283,15 +283,18 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="ContainerCraftingNetworkExtension.cs" />
         <Compile Include="Patches\InventoryItemsPatch.cs" />
         <Compile Include="Patches\ReversePatches.cs" />
         <Compile Include="Plugin.Settings.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Plugin.cs" />
-        <Compile Include="Tracking\InventoryTracker.cs" />
-        <Compile Include="Tracking\TrackContainersWhenPlayerUsesCraftingStationPatch.cs" />
+        <Compile Include="Test.cs" />
+        <Compile Include="Tracking\ContainerLifecyclePatches.cs" />
+        <Compile Include="Tracking\Tracker.cs" />
     </ItemGroup>
     <ItemGroup>
+      <Content Include="deploy.ps1" />
       <Content Include="README.md" />
       <Content Include="ThunderStoreResources\icon.png" />
       <Content Include="ThunderStoreResources\manifest.json" />
