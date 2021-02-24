@@ -1,0 +1,9 @@
+﻿{
+  "name": "Simple Auto Game Start",
+  "description": "Just loads the configured character and world. Singleplayer only",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/abearcodes/Valheim",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.600"
+  ]
+}
