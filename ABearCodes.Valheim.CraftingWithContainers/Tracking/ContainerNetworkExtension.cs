@@ -1,17 +1,15 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using ABearCodes.Valheim.CraftingWithContainers.Patches;
-using UnityEngine;
 
 namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
 {
-    public class ContainerCraftingNetworkExtension
+    public class ContainerNetworkExtension
     {
         private readonly Container _container;
-        public readonly ZNetView _zNetView;
+        private readonly ZNetView _zNetView;
 
-        public ContainerCraftingNetworkExtension(Container container, ZNetView zNetView)
+        public ContainerNetworkExtension(Container container, ZNetView zNetView)
         {
             _container = container;
             _zNetView = zNetView;
@@ -64,6 +62,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
             else
             {
                 _container.SetInUse(shouldLock);
+                ZDOMan.instance.ForceSendZDO(uid, _zNetView.GetZDO().m_uid);
+                _zNetView.GetZDO().SetOwner(uid);
                 _zNetView.InvokeRPC(uid, "LockContainersResponse", playerId, shouldLock, true);
             }
         }

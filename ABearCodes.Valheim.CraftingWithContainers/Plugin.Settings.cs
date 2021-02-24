@@ -12,7 +12,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
 
             public static ConfigEntry<bool> CraftingWithContainersEnabled { get; set; }
 
-            public static ConfigEntry<float> ContainerLookupRangeMultiplier { get; set; }
+            public static ConfigEntry<float> ContainerLookupRange { get; set; }
 
             public static ConfigEntry<bool> TakeFromPlayerInventoryFirst { get; set; }
 
@@ -49,8 +49,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 Settings.TakeFromPlayerInventoryFirst = configFile.Bind("CraftingWithContainers",
                     "TakeFromPlayerInventoryFirst", false,
                     "Prioritize taking items from the players inventory when crafting");
-                Settings.ContainerLookupRangeMultiplier = configFile.Bind("CraftingWithContainers",
-                    "ContainerLookupRangeMultiplier", 1.0f,
+                Settings.ContainerLookupRange = configFile.Bind("CraftingWithContainers",
+                    "ContainerLookupRange", 10.0f,
                     "Multiplier for the range in which the mod searches for containers.\n" +
                     "Base range is equal to the range of the crafting table in use.\n" +
                     "Will not take from containers that are not currently loaded into memory.");
@@ -69,6 +69,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                         "$ship_longship"),
                     "Comma separated list of filtered \"holders\" for the containers:" +
                     "chests, carts, ships. Uses the name of the \"Piece\" the container is attached to");
+                
             }
         }
     }
