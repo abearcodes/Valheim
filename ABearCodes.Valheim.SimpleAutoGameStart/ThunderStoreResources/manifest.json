@@ -1,5 +1,5 @@
 ﻿{
-  "name": "Simple Auto Game Start",
+  "name": "Simple_Auto_Game_Start",
   "description": "Just loads the configured character and world. Singleplayer only",
   "version_number": "1.0.0",
   "website_url": "https://github.com/abearcodes/Valheim",
