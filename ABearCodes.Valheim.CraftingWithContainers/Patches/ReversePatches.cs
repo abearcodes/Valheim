@@ -8,14 +8,14 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
     {
         [HarmonyReversePatch]
         [HarmonyPatch(typeof(Inventory), "CountItems")]
-        public static int InventoryCountItems(Inventory __instance, string name)
+        public static int CountItemsOriginal(this Inventory __instance, string name)
         {
             throw new NotImplementedException("Stub");
         }
 
         [HarmonyReversePatch]
         [HarmonyPatch(typeof(Inventory), "RemoveItem", typeof(string), typeof(int))]
-        public static void InventoryRemoveItemByString(Inventory __instance, string name, int amount)
+        public static void RemoveItemOriginal(this Inventory __instance, string name, int amount)
         {
             throw new NotImplementedException("Stub");
         }

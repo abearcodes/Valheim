@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -20,13 +21,18 @@ namespace ABearCodes.Valheim.CraftingWithContainers
         }
 
         public static ManualLogSource Log { get; private set; }
-        public static bool loading = false;
+        private bool loading = false;
+        public static PluginSettings Settings { get; private set; }
 
         private void Awake()
         {
-            Settings.BindConfig(Config);
+            Settings = new PluginSettings(Config);
             var harmony = new Harmony("ABearCodes.Valheim.CraftingWithContainers");
             harmony.PatchAll();
+            foreach (var patchedMethod in harmony.GetPatchedMethods())
+            {
+                Debug.Log(patchedMethod);
+            }
         }
 
         private void LateUpdate()
@@ -67,18 +73,18 @@ namespace ABearCodes.Valheim.CraftingWithContainers
 
         private void OnGUI()
         {
-            // foreach (var containerEntry in Tracking.Tracker.AllContainers.Where(c => c != null))
-            // {
-            //     var pos = Camera.main.WorldToScreenPoint(containerEntry.Container.transform.position);
-            //     
-            //     GUI.color = Color.green;
-            //     if (pos.z > 0.01f)
-            //     {
-            //         GUI.Label(
-            //             new Rect((float) (pos.x - 50.0), Screen.height - pos.y, 250f, 50f),
-            //             $"O:{containerEntry.ContainerCraftingNetworkExtension._zNetView.GetZDO().m_owner} | me? {containerEntry.Container.IsOwner()}");
-            //     }
-            // }
+            if (!Settings.DebugViableContainerIndicatorEnabled.Value) return;
+            foreach (var containerEntry in ContainerTracker.GetViableContainersInRangeForPlayer(Player.m_localPlayer, Settings.ContainerLookupRange.Value))
+            {
+                var position = Camera.main.WorldToScreenPoint(containerEntry.Container.transform.position);
+                GUI.color = Color.magenta;
+                if (position.z > 0.01f)
+                {
+                    GUI.Label(
+                        new Rect((float) (position.x - 50.0), Screen.height - position.y, 250f, 50f), 
+                        "++");
+                }
+            }
         }
     }
 }

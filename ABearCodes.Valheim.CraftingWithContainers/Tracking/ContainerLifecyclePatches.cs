@@ -23,7 +23,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
                 Plugin.Log.LogDebug($"Will not track container {__instance.m_name} ({__instance.name}). ZNetView: {___m_nview.GetZDO()?.m_uid}.");
                 return;
             }
-            ContainerTrackingExtensions.Add(__instance, ___m_nview, piece);
+            ContainerTracker.Add(__instance, ___m_nview, piece);
         }
         private static bool TryGetValidOwningPiece(ZNetView zNetView, out Piece piece)
         {
@@ -36,7 +36,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
         private static void OnDestroyed(Container __instance)
         {
             Plugin.Log.LogDebug($"{__instance?.gameObject.name} is destroyed");
-            ContainerTrackingExtensions.Remove(__instance);
+            ContainerTracker.Remove(__instance);
         }
     }
 }
