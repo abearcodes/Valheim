@@ -37,6 +37,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
             foreach (var containerEntry in ContainerTracker.GetViableContainersInRangeForPlayer(Player.m_localPlayer, Settings.ContainerLookupRange.Value))
             {
                 var position = Camera.main.WorldToScreenPoint(containerEntry.Container.transform.position + Vector3.up * 0.5f);
+                if (position.z <= 0.1) continue;
                 GUI.color = Color.magenta;
                 var textSize = GUI.skin.label.CalcSize(new GUIContent("+"));
                 GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), "+");

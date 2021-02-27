@@ -58,7 +58,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 "TakeFromPlayerInventoryFirst", false,
                 "Prioritize taking items from the players inventory when crafting");
             ContainerLookupRange = configFile.Bind("General",
-                "ContainerLookupRange", 10.0f,
+                "ContainerLookupRange", 15.0f,
                 "Multiplier for the range in which the mod searches for containers.\n" +
                 "Base range is equal to the range of the crafting table in use.\n" +
                 "Will not take from containers that are not currently loaded into memory.");
@@ -89,9 +89,9 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 "Comma separated list of filtered \"holders\" for the containers:" +
                 "chests, carts, ships. Uses the name of the \"Piece\" the container is attached to");
             // Debug
-            DebugViableContainerIndicatorEnabled = configFile.Bind("Debug",
-                "DebugViableContainerIndicatorEnabled", true,
-                "Shows nearby viable containers by adding a small indicator on containers that are" +
+            DebugViableContainerIndicatorEnabled = configFile.Bind("zDebug",
+                "DebugViableContainerIndicatorEnabled", false,
+                "Shows nearby viable containers by adding a small indicator on containers that are\n" +
                 "considered viable according to the current settings.");
         }
 
