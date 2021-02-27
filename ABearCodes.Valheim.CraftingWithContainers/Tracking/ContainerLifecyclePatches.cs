@@ -10,7 +10,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
         [HarmonyPostfix]
         private static void Awake(Container __instance, ZNetView ___m_nview)
         {
-            
             // if no ZNetView is present then we are dealing with a
             // placement ghost or some other thing, either we it's not a network
             // object for our purposes

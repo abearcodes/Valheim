@@ -284,8 +284,8 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Crafting\CraftingHelper.cs" />
-        <Compile Include="Crafting\ItemFindingPatches2.cs" />
-        <Compile Include="Crafting\ItemFindingPatches.cs" />
+        <Compile Include="Crafting\InventoryCallsPatches.cs" />
+        <Compile Include="Crafting\UIVisualPatches.cs" />
         <Compile Include="Patches\ReversePatches.cs" />
         <Compile Include="Plugin.Settings.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
@@ -295,6 +295,8 @@
         <Compile Include="Tracking\ContainerLifecyclePatches.cs" />
         <Compile Include="Tracking\ContainerTracker.Searcher.cs" />
         <Compile Include="Tracking\PlayerLifecyclePatches.cs" />
+        <Compile Include="Utils\HarmonyUtils.cs" />
+        <Compile Include="Utils\InventoryUtils.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="deploy.ps1" />
@@ -302,9 +304,6 @@
       <Content Include="ThunderStoreResources\icon.png" />
       <Content Include="ThunderStoreResources\manifest.json" />
       <Content Include="ThunderStoreResources\README.md" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Utils" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
