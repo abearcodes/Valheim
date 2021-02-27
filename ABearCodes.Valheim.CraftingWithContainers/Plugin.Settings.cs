@@ -71,11 +71,13 @@ namespace ABearCodes.Valheim.CraftingWithContainers
             AllowTakeFuelForKilnAndFurnace = configFile.Bind("Interactions",
                 "AllowTakeFuelForKilnAndFurnace", true,
                 "If true, will allow the mod to take fuel from nearby containers when using\n" +
-                "Kilns and Furnaces.");
+                "Kilns and Furnaces.\n" +
+                ">>> REQUIRES RESTART <<<");
             AllowTakeFuelForFireplace = configFile.Bind("Interactions",
                 "AllowTakeFuelForFireplace", true,
                 "If true, will allow the mod to take fuel from nearby containers when using\n" +
-                "Fireplaces and Hearths");
+                "Fireplaces and Hearths\n" +
+                ">>> REQUIRES RESTART <<<");
 
             // Filter
             ShouldFilterByContainerPieceNames = configFile.Bind("Filtering",
