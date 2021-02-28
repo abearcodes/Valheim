@@ -1,28 +1,25 @@
-﻿# Crafting with Containers
+﻿
+# Crafting with Containers
 
-![demo](https://i.imgur.com/o2P8aT2.png)
+![demo](https://raw.githubusercontent.com/abearcodes/Valheim/development/ABearCodes.Valheim.CraftingWithContainers/ThunderStoreResources/succ.gif)
 
-Are you tired of rummaging through chests to find that one missing ingredient that you know
-is somewhere? Tired of having to split stacks, craft and then put it all back again? 
+Are you tired of rummaging through chests to find that one missing ingredient that you know is somewhere? Tired of having to split stacks, craft and then put it all back again? 
 
 Say no more!
 
-With this mod when you are using a crafting table it will not only use your inventory, 
-but also containers in its range.  
+With this mod when you are crafting, building or fueling up, it will not only use your inventory, but also containers within your range.  
 
 Limited to using crafting tables only at the moment. 
 
 [Jump to changelog by clicking here](#changelog)
 
 #### What containers are checked?
-- within range of the crafting station (configurable)
-- accessible by player using the crafting bench
+- within a configurable range
+- accessible by the player using the mod
 - created by a player (generated chests are ignored)
 - cart and ship containers (configurable)
-
-#### Current limitations:
-- if a container is placed after the player started using the crafting station, 
-  it will not be considered until the player exits the stations and triggers it again
+    - (!) there are still some issues with networking that are being worked on  
+    
   
 ## Manual installation
 
@@ -36,39 +33,39 @@ https://github.com/abearcodes/Valheim/issues/new
 
 ## Configuration
 
-The plugin supports multiple ways of configuring it's behaviour. 
-For specific details on how to set them, please check the config file
-via R2Modman or manually under 
+The plugin supports multiple ways of configuring it's behaviour. For specific details on how to set them, please check the config file via R2Modman or manually under 
 
 `BepInEx/config/com.github.abearcodes.valheim.craftingwithcontainers.cfg` 
 
-The available settings are as follows:
+The list below only highlights settings with major impact. 
 
-- **TakeFromPlayerInventoryFirst**
+#### General settings
 
-  Prioritize taking items from the players inventory when crafting. 
-  By default is disabled and will use resources from containers before
-  taking items from the player's inventory. 
+- **ContainerLookupRange**
 
-- **ContainerLookupRangeMultiplier**
+    Range in which the mod searches for containers. Base range is equal to the range of the crafting table (20). Will not take from containers that are not currently loaded into memory, so setting this value to big numbers might not yield the expected result.
 
-  Multiplier for the range in which the mod searches for containers.
-  Base range is equal to the range of the crafting table in use.
-  Will not take from containers that are not currently loaded into memory.
-     
-- **ShowStationExtensionEffect**
-
-  Adds a station extension effect to chests. This effect is the one that
-  the game uses by default for chopping blocks, tanning decks, etc.
+- **AddExtractionEffectWhenCrafting**
   
-  Shouldn't influence performance too much unless you have hundreds of containers.
-  
-  The effect only appears when you are using a crafting table. Affects ships and carts!
-  
-  ![demo](https://i.imgur.com/O8AGTgH.png)
-      
+    _Enabled by default_  
+
+    If enabled, when removing items from containers an fading line effect will appear from affected containers (see demo screenshot).
+
+- **LogItemRemovalsToConsole**
+
+    If enabled, item removal requests will be logged to the ingame console (accessible via F5).
+
+    ![!image](https://i.imgur.com/VQ1Qkpb.png)
+
+#### Interactions settings
+
+- **AllowTakeFuelForKilnAndFurnace** and **AllowTakeFuelForFireplace**
+
+    If enabled, will allow the mod to take fuel from nearby containers when using fuels & kilns or fireplaces accordingly. 
  
- - **ShouldFilterByContainerPieceNames** and **AllowedContainerLookupPieceNames**
+#### Filtering settings  
+ 
+- **ShouldFilterByContainerPieceNames** and **AllowedContainerLookupPieceNames**
  
     These settings allows you to enable and filter the containers that are checked.
     For example, you might want to exclude ships, carts or personal chests.
@@ -77,24 +74,45 @@ The available settings are as follows:
      
     By default it's disabled and all containers are considered when crafting. 
 
- ## Changelog
+# Changelog
+
+### v1.0.4
+
+Big changes! Pretty much a rewrite!
+
+- _**No longer requires a crafting station**_
+- _**Now supports building too!**_
+- _**No longer patches Inventory methods directly.**_
+    - Instead it reroutes required calls to Inventory to a static class.
+    - This should help with mod compatibility as the initial methods are untouched. This will cause mods not to use the "CraftingFromContainers" functionality, but both mods should work properly.   
+- Toggleable Smelter, Kiln and Fireplace fuel consumption from nearby containers
+- Added indicator to how many resources of a type the player has
+
+  ![image](https://i.imgur.com/hDS5fyL.png)
+  
+- Swapped previous "crafting station extension" effect for a "sucking" effect when the crafting actually takes place
+- Option to take resources from player inventory first removed
+- Option to log crafting events to Console window (via `F5`)
+
+  ![!image](https://i.imgur.com/VQ1Qkpb.png)
+
  
- ### 1.0.3
+## 1.0.3
   
  - Partial multiplayer workaround for containers not updating. Does not fix: ships, moving carts,
  dragging resources at the last possible second.    
  
- ### 1.0.2
+## 1.0.2
  
  - Fixed a bug of not removing items when the amount of items is the exact
  one needed.
  
  - Fixed a bug where tracker would attempt to remove effects from non existing entries 
  
- ### 1.0.1
+## 1.0.1
  
  Changed GitHub URL in README
  
- ### 1.0.0 
+## 1.0.0 
  
  Initial release
