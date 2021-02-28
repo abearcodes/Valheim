@@ -87,7 +87,7 @@ _*for brevity, CwC stands for CraftingWithContainers further on_
 **Conflicting**:
 
 - ImprovedBuildHud (tested on 1.0.6)
-  - CwC will completely override the changes to the requirements list that ImprovedBuildHud provides. So while nothing will break, it pretty much disables ImprovedBuildHud. CwC does have it's own indicator of how many resources are available for crafting and building, but it won't show you how how many items can be built. Want it as a feature? Create a ticket on GitHub!
+    - CwC will completely override the changes to the requirements list that ImprovedBuildHud provides. So while nothing will break, it pretty much disables ImprovedBuildHud. CwC does have it's own indicator of how many resources are available for crafting and building, but it won't show you how how many items can be built. Want it as a feature? Create a ticket on GitHub!
   
 - Other mods that completely take control over the crafting UI or functions 
 
