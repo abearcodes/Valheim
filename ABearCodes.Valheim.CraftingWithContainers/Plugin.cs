@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using ABearCodes.Valheim.CraftingWithContainers.Patches;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using BepInEx;
 using BepInEx.Logging;
@@ -11,7 +11,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
 {
     [BepInPlugin("com.github.abearcodes.valheim.craftingwithcontainers",
         "Crafting with Containers",
-        "1.0.6")]
+        "1.0.7")]
     [BepInDependency("org.bepinex.plugins.valheim_plus", BepInDependency.DependencyFlags.SoftDependency)]
     public partial class Plugin : BaseUnityPlugin
     {

@@ -27,11 +27,7 @@ Drop the `.dll` into `<GameLocation>\BepInEx\plugins`
 Please create an issue in the GitHub repo here:
 
 https://github.com/abearcodes/Valheim/issues/new
-
-## Confirmed compatibility
-
-- Valheim Plus
-
+ 
 ## Configuration
 
 The plugin supports multiple ways of configuring it's behaviour. For specific details on how to set them, please check the config file via R2Modman or manually under 
@@ -75,7 +71,31 @@ The list below only highlights settings with major impact.
      
     By default it's disabled and all containers are considered when crafting. 
 
+## Compatibility
+
+This list will mainly contains mods that somehow influence your crafting, building or storing experience. Compatibility is a flimsy subject as mods develop and change, so the compatibility list below is based on the latest release of the mods affected and the stated version of this mod. You can deduct the date based on the releases on Thunderstore if needed.
+
+The entries in this list are partially gathered by me, but mainly by other players that have tested the mods together and reported back.
+
+_*for brevity, CwC stands for CraftingWithContainers further on_
+
+**Compatible**:
+
+- Valheim Plus (tested on 1.0.6). CwC disables the conflicting Valheim patch. 
+- Quick Deposit (tested on 1.0.6)
+
+**Conflicting**:
+
+- ImprovedBuildHud (tested on 1.0.6)
+    - CwC will completely override the changes to the requirements list that ImprovedBuildHud provides. So while nothing will break, it pretty much disables ImprovedBuildHud. CwC does have it's own indicator of how many resources are available for crafting and building, but it won't show you how how many items can be built. Want it as a feature? Create a ticket on GitHub!
+  
+- Other mods that completely take control over the crafting UI or functions 
+
 # Changelog
+
+### v1.0.7
+
+- Temp fix for boat/cart duping. Now requires the player to be the user of it for the container to be considered viable. "Driving" the cart or boats or interacting with the container will be considered "using" it.  
 
 ### v1.0.6
 
