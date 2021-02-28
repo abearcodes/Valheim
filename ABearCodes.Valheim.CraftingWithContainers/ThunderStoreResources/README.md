@@ -95,7 +95,7 @@ _*for brevity, CwC stands for CraftingWithContainers further on_
 
 ### v1.0.7
 
-- Temp fix for boat/cart duping. Now requires the player to be the owner for the container to be considered "viable". 
+- Temp fix for boat/cart duping. Now requires the player to be the user of it for the container to be considered viable. "Driving" the cart or boats or interacting with the container will be considered "using" it.  
 
 ### v1.0.6
 
