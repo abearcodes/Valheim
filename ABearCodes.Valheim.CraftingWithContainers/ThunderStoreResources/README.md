@@ -9,8 +9,6 @@ Say no more!
 
 With this mod when you are crafting, building or fueling up, it will not only use your inventory, but also containers within your range.  
 
-Limited to using crafting tables only at the moment. 
-
 [Jump to changelog by clicking here](#changelog)
 
 #### What containers are checked?
@@ -19,8 +17,7 @@ Limited to using crafting tables only at the moment.
 - created by a player (generated chests are ignored)
 - cart and ship containers (configurable)
     - (!) there are still some issues with networking that are being worked on  
-    
-  
+      
 ## Manual installation
 
 Drop the `.dll` into `<GameLocation>\BepInEx\plugins`
@@ -30,6 +27,10 @@ Drop the `.dll` into `<GameLocation>\BepInEx\plugins`
 Please create an issue in the GitHub repo here:
 
 https://github.com/abearcodes/Valheim/issues/new
+
+## Confirmed compatibility
+
+- Valheim Plus
 
 ## Configuration
 
@@ -75,6 +76,11 @@ The list below only highlights settings with major impact.
     By default it's disabled and all containers are considered when crafting. 
 
 # Changelog
+
+### v1.0.5
+
+- Compatibility fix for crafting requirements indicator 
+    - Reverts a patch introduced by ValheimPlus and ImprovedBuildHud on `InventoryGui.SetupRequirement` that would break the crafting requirements indicator. 
 
 ### v1.0.4
 
