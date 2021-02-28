@@ -18,8 +18,9 @@ namespace ABearCodes.Valheim.CraftingWithContainers
         private static void RemoveAllPrefixesFrom_InventoryGui_SetupRequirement(Harmony harmony)
         {
             var invSetupReqRef = AccessTools.Method(typeof(InventoryGui), "SetupRequirement");
-            var prefixes = Harmony.GetPatchInfo(invSetupReqRef).Prefixes;
-            foreach (var prefix in prefixes)
+            var patchInfo = Harmony.GetPatchInfo(invSetupReqRef);
+            if (patchInfo == null) return;
+            foreach (var prefix in patchInfo.Prefixes)
             {
                 harmony.Unpatch(invSetupReqRef, HarmonyPatchType.Prefix, prefix.owner);
             }
