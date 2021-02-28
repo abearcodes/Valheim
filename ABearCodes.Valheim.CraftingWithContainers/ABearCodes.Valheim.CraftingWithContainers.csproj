@@ -286,12 +286,12 @@
         <Compile Include="Crafting\InventoryDetours.cs" />
         <Compile Include="Crafting\InventoryItemRemover.cs" />
         <Compile Include="Crafting\UIVisualPatches.cs" />
+        <Compile Include="Patches\CompatibilityPatches.cs" />
         <Compile Include="Patches\InventoryCallsPatches.cs" />
         <Compile Include="Patches\ReversePatches.cs" />
         <Compile Include="Plugin.Settings.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Plugin.cs" />
-        <Compile Include="test.cs" />
         <Compile Include="Tracking\ContainerNetworkExtension.cs" />
         <Compile Include="Tracking\ContainerTracker.cs" />
         <Compile Include="Tracking\ContainerLifecycleHooks.cs" />

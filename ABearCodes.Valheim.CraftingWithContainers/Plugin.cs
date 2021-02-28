@@ -1,4 +1,5 @@
-﻿using ABearCodes.Valheim.CraftingWithContainers.Tracking;
+﻿using System.Linq;
+using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -28,6 +29,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
             HarmonyFileLog.Enabled = true;   
 #endif
             var harmony = new Harmony("ABearCodes.Valheim.CraftingWithContainers");
+            CompatibilityFixer.Apply(harmony);
             harmony.PatchAll();
         }
 
