@@ -63,5 +63,13 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
                     "Crafting amount indicator won't work properly");
             return instructionsList;
         }
+        
+        [HarmonyPatch(typeof(InventoryGui), "DoCrafting", typeof(Player))]
+        [HarmonyPrefix]
+        private static void PatchDoCraftingHook(Player player, Recipe ___m_craftRecipe)
+        {
+            if (!Plugin.Settings.LogItemRemovalsToConsole.Value) return;
+            Console.instance.Print($"<color=orange>{player.GetPlayerName()}</color> crafting <color=orange>{___m_craftRecipe.name}</color>");
+        }
     }
 }

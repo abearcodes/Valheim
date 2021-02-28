@@ -48,5 +48,13 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
         {
             throw new NotImplementedException("Stub");
         }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(Chat), "AddString", 
+            typeof(string), typeof(string), typeof(Talker.Type))]
+        public static void AddString(this Chat instance, string user, string text, Talker.Type type)
+        {
+            throw new NotImplementedException("Stub");
+        }
     }
 }

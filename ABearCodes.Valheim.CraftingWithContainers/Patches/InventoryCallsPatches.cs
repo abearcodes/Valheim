@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using ABearCodes.Valheim.CraftingWithContainers.Crafting;
 using ABearCodes.Valheim.CraftingWithContainers.Utils;
 using HarmonyLib;
 using JetBrains.Annotations;
@@ -10,7 +11,7 @@ using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 
-namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
+namespace ABearCodes.Valheim.CraftingWithContainers.Patches
 {
     /*
      * Patches a series of calls to Inventory::CountItems/HaveItem/etc via transpiler in various
@@ -31,15 +32,15 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
                 new Tuple<CodeInstruction, CodeInstruction>(
                     new CodeInstruction(OpCodes.Callvirt,
                         AccessTools.Method(typeof(Inventory), "CountItems", new[] {typeof(string)})),
-                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(CraftingHelper), "CountItemsArea"))),
+                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InventoryDetours), "CountItemsArea"))),
                 new Tuple<CodeInstruction, CodeInstruction>(
                     new CodeInstruction(OpCodes.Callvirt,
                         AccessTools.Method(typeof(Inventory), "HaveItem", new[] {typeof(string)})),
-                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(CraftingHelper), "HaveItemArea"))),
+                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InventoryDetours), "HaveItemArea"))),
                 new Tuple<CodeInstruction, CodeInstruction>(
                     new CodeInstruction(OpCodes.Callvirt,
                         AccessTools.Method(typeof(Inventory), "RemoveItem", new[] {typeof(string), typeof(int)})),
-                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(CraftingHelper), "RemoveItemArea")))
+                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InventoryDetours), "RemoveItemArea")))
                 
             };
 

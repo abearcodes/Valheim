@@ -7,10 +7,11 @@ using UnityEngine;
 using ABearCodes.Valheim.CraftingWithContainers.Patches;
 using ABearCodes.Valheim.CraftingWithContainers.Utils;
 using JetBrains.Annotations;
+using Object = UnityEngine.Object;
 
 namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
 {
-    public static class CraftingHelper
+    public static class InventoryDetours
     {
         [UsedImplicitly]
         public static int CountItemsArea(this Inventory inventory, string itemName)
@@ -20,7 +21,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
                 return inventory.CountItems(itemName);
             // only run our handler if we are tracking the inventory, hence it's a 
             // player inventory. otherwise - let the default execute as is
-            
             var playerItemCount = inventory.CountItems(itemName);
             var containers = ContainerTracker
                 .GetViableContainersInRangeForPlayer(player, Plugin.Settings.ContainerLookupRange.Value);
@@ -55,43 +55,31 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
                 inventory.RemoveItem(name, amount);
                 return;
             }
-            
             var containers = ContainerTracker.GetViableContainersInRangeForPlayer(player,
                 Plugin.Settings.ContainerLookupRange.Value);
-            IterateAndRemoveItemsFromInventories(player, containers, name, amount);
+            InventoryItemRemover.IterateAndRemoveItemsFromInventories(player, containers, name, amount, out var removalReport);
+
+            if (Plugin.Settings.AddExtractionEffectWhenCrafting.Value)
+            {
+                foreach (var removal in removalReport.Removals
+                    .Where(removal => removal.TrackedContainer.HasValue))
+                {
+                    // ReSharper disable once PossibleInvalidOperationException
+                    SpawnEffect(player, removal.TrackedContainer.Value);
+                }
+            }
+            
+            Plugin.Log.LogDebug(removalReport.GetReportString());
+            if (Plugin.Settings.LogItemRemovalsToConsole.Value)
+            {
+                Console.instance.Print($"{removalReport.GetReportString(true)}");
+            }
         }
-        
-        private static void IterateAndRemoveItemsFromInventories(Player player, List<TrackedContainer> containers,
-            string name, int amount)
+        private static void SpawnEffect(Player player, TrackedContainer container)
         {
-            var leftToRemove = amount;
-            if (Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
-            {
-                leftToRemove = player.GetInventory().RemoveItemAsMuchAsPossible(name, amount);
-            }
-            foreach (var container in containers)
-            {
-                leftToRemove = container.Container.GetInventory().RemoveItemAsMuchAsPossible(name, leftToRemove);
-                UpdateContainerNetworkData(player, container.Container);
-                if (leftToRemove == 0)
-                    break;
-            }
-            if (!Plugin.Settings.TakeFromPlayerInventoryFirst.Value && leftToRemove > 0)
-            {
-                player.GetInventory().RemoveItemAsMuchAsPossible(name, amount);
-            }
+            Plugin.Log.LogDebug($"Attaching effect between player {player.GetPlayerName()} and {container.Container.m_name}({container.ZNetView.GetZDO().m_uid})");
+            LineEffectCreator.Create(container.Container.transform.position, player.transform,
+                0.1f, 0.01f, 0.3f, 0.5f);
         }
-
-        private static void UpdateContainerNetworkData(Player player, Container container)
-        {
-            var containerZNewView = (ZNetView) AccessTools.Field(typeof(Container), "m_nview").GetValue(container);
-            container.Save();
-            var containerUid = containerZNewView.GetZDO().m_uid;
-            ZDOMan.instance.ForceSendZDO(player.GetPlayerID(), containerUid);
-            containerZNewView.GetZDO().SetOwner(player.GetPlayerID());
-        }
-
-
-        
     }
 }

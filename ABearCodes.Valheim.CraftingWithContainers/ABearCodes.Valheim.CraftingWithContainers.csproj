@@ -283,27 +283,32 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Crafting\CraftingHelper.cs" />
-        <Compile Include="Crafting\InventoryCallsPatches.cs" />
+        <Compile Include="Crafting\InventoryDetours.cs" />
+        <Compile Include="Crafting\InventoryItemRemover.cs" />
         <Compile Include="Crafting\UIVisualPatches.cs" />
+        <Compile Include="Patches\InventoryCallsPatches.cs" />
         <Compile Include="Patches\ReversePatches.cs" />
         <Compile Include="Plugin.Settings.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Plugin.cs" />
+        <Compile Include="test.cs" />
         <Compile Include="Tracking\ContainerNetworkExtension.cs" />
         <Compile Include="Tracking\ContainerTracker.cs" />
-        <Compile Include="Tracking\ContainerLifecyclePatches.cs" />
+        <Compile Include="Tracking\ContainerLifecycleHooks.cs" />
         <Compile Include="Tracking\ContainerTracker.Searcher.cs" />
-        <Compile Include="Tracking\PlayerLifecyclePatches.cs" />
+        <Compile Include="Tracking\PlayerLifecycleHooks.cs" />
         <Compile Include="Utils\HarmonyUtils.cs" />
         <Compile Include="Utils\InventoryUtils.cs" />
+        <Compile Include="Utils\LineEffectController.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="deploy.ps1" />
       <Content Include="README.md" />
       <Content Include="ThunderStoreResources\icon.png" />
+      <Content Include="ThunderStoreResources\img.png" />
       <Content Include="ThunderStoreResources\manifest.json" />
       <Content Include="ThunderStoreResources\README.md" />
+      <Content Include="ThunderStoreResources\succ.gif" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
