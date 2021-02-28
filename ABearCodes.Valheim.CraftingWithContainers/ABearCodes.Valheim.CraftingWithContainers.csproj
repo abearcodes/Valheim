@@ -302,7 +302,7 @@
         <Compile Include="Utils\LineEffectController.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="deploy.ps1" />
+      <Content Include="stageThunderstoreRelease.ps1" />
       <Content Include="README.md" />
       <Content Include="ThunderStoreResources\icon.png" />
       <Content Include="ThunderStoreResources\img.png" />
