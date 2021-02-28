@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace ABearCodes.Valheim.CraftingWithContainers
+namespace ABearCodes.Valheim.CraftingWithContainers.Patches
 {
     public static class CompatibilityFixer
     {
