@@ -77,6 +77,10 @@ The list below only highlights settings with major impact.
 
 # Changelog
 
+### v1.0.6
+
+- Fix Nullreference exception when Valheim plus is not present 
+
 ### v1.0.5
 
 - Compatibility fix for crafting requirements indicator 
