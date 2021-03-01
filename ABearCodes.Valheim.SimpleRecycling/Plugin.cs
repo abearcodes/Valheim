@@ -11,7 +11,7 @@ namespace ABearCodes.Valheim.SimpleRecycling
 {
     [BepInPlugin("com.github.abearcodes.valheim.simplerecycling",
         "SimpleRecycling",
-        "0.0.1")]
+        "0.0.2")]
     public class Plugin : BaseUnityPlugin
     {
         private Button recycleButton;
@@ -31,7 +31,7 @@ namespace ABearCodes.Valheim.SimpleRecycling
 
         private void FixedUpdate()
         {
-            if (!InventoryGui.instance.IsContainerOpen() && recycleButton != null)
+            if (InventoryGui.instance != null && recycleButton != null && !InventoryGui.instance.IsContainerOpen())
             {
                 SetButtonState(false);
             }
