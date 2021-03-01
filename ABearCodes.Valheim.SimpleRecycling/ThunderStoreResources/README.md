@@ -37,6 +37,10 @@ None for now
 
 ## Changelog
 
+### 0.0.2
+
+- Fix a null reference exception in main game menu
+
 ### 0.0.1
  
 Initial release
