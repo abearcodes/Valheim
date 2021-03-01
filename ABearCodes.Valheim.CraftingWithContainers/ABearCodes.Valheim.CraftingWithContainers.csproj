@@ -289,7 +289,7 @@
         <Compile Include="Patches\CompatibilityPatches.cs" />
         <Compile Include="Patches\InventoryCallsPatches.cs" />
         <Compile Include="Patches\ReversePatches.cs" />
-        <Compile Include="Plugin.Settings.cs" />
+        <Compile Include="PluginSettings.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Tracking\ContainerNetworkExtension.cs" />

@@ -281,11 +281,17 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="PluginSettings.cs" />
+        <Compile Include="Recycling\Recycler.cs" />
+        <Compile Include="Recycling\RecyclingEntry.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="UI\ContainerRecyclingButtonHolder.cs" />
+        <Compile Include="UI\TargetRecyclingButtonHolder.cs" />
+        <Compile Include="UI\UIDragger.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="stageThunderstoreRelease.ps1" />
+      <Content Include="stageThunderStoreAndNexus.ps1" />
       <Content Include="ThunderStoreResources\manifest.json" />
       <Content Include="ThunderStoreResources\README.md" />
       <Content Include="ThunderStoreResources\icon.png" />

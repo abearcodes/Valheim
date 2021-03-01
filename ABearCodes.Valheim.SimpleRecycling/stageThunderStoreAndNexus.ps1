@@ -21,3 +21,10 @@ $compress = @{
 }
 Compress-Archive @compress
 
+$compress = @{
+    Path = $dllPath
+    CompressionLevel = "Optimal"
+    DestinationPath = ".\$($dllName).Nexus.zip"
+}
+Compress-Archive @compress
+
