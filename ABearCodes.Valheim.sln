@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABearCodes.Valheim.Crafting
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABearCodes.Valheim.SimpleAutoGameStart", "ABearCodes.Valheim.SimpleAutoGameStart\ABearCodes.Valheim.SimpleAutoGameStart.csproj", "{C764F590-96E0-4221-A2D5-3AFD213B423B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABearCodes.Valheim.Recycler", "ABearCodes.Valheim.SimpleRecycling\ABearCodes.Valheim.SimpleRecycling.csproj", "{C764F590-96E0-4221-A2D5-3AFD213B423B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
