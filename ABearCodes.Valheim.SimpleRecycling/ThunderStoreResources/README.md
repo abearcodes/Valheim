@@ -37,6 +37,12 @@ None for now
 
 ## Changelog
 
+### 0.0.3
+
+- now searches all recipes 
+- calculates the amount of resources based on quality level
+- will not recycle if not enough slots are available
+
 ### 0.0.2
 
 - Fix a null reference exception in main game menu
