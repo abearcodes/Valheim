@@ -72,6 +72,10 @@ ContainerButtonPosition = {\"x\":502.42425537109377,\"y\":147.06060791015626,\"z
 
 ## Changelog
 
+### 0.0.5
+
+- fixed a bug when uncrafting a single stacked item would yield returns for the whole stack
+
 ### 0.0.4
 
 - __**(!) Added "RecyclingRate" setting**__
