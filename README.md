@@ -1,6 +1,6 @@
 ﻿# ABearCodes Valheim Mods
 
-A repo for my Valheim mods. Currently only houses CraftingWithContainers.
+A repo for my Valheim mods
 
 ## Mods list
 
