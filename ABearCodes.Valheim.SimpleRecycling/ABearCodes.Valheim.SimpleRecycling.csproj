@@ -4,11 +4,11 @@
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{9A6448B7-AF54-423C-A162-281293225599}</ProjectGuid>
+        <ProjectGuid>{C764F590-96E0-4221-A2D5-3AFD213B423D}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>ABearCodes.Valheim.CraftingWithContainers</RootNamespace>
-        <AssemblyName>ABearCodes.Valheim.CraftingWithContainers</AssemblyName>
+        <RootNamespace>ABearCodes.Valheim.SimpleRecycling</RootNamespace>
+        <AssemblyName>ABearCodes.Valheim.SimpleRecycling</AssemblyName>
         <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
     </PropertyGroup>
@@ -21,7 +21,6 @@
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -66,9 +65,6 @@
         <Reference Include="BepInEx, Version=5.4.6.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\BepInEx\core\BepInEx.dll</HintPath>
         </Reference>
-        <Reference Include="BepInEx.Harmony, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\BepInEx\core\BepInEx.Harmony.dll</HintPath>
-        </Reference>
         <Reference Include="Mono.Posix, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
           <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\unstripped_corlib\Mono.Posix.dll</HintPath>
         </Reference>
@@ -85,9 +81,11 @@
         <Reference Include="System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\unstripped_corlib\System.Configuration.dll</HintPath>
         </Reference>
+        <Reference Include="System.Core" />
         <Reference Include="System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\unstripped_corlib\System.Core.dll</HintPath>
         </Reference>
+        <Reference Include="System.Data" />
         <Reference Include="System.Numerics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\unstripped_corlib\System.Numerics.dll</HintPath>
         </Reference>
@@ -283,32 +281,20 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Crafting\InventoryDetours.cs" />
-        <Compile Include="Crafting\InventoryItemRemover.cs" />
-        <Compile Include="Crafting\UIVisualPatches.cs" />
-        <Compile Include="Patches\CompatibilityPatches.cs" />
-        <Compile Include="Patches\InventoryCallsPatches.cs" />
-        <Compile Include="Patches\ReversePatches.cs" />
         <Compile Include="PluginSettings.cs" />
-        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Recycling\Recycler.cs" />
+        <Compile Include="Recycling\RecyclingEntry.cs" />
         <Compile Include="Plugin.cs" />
-        <Compile Include="Tracking\ContainerNetworkExtension.cs" />
-        <Compile Include="Tracking\ContainerTracker.cs" />
-        <Compile Include="Tracking\ContainerLifecycleHooks.cs" />
-        <Compile Include="Tracking\ContainerTracker.Searcher.cs" />
-        <Compile Include="Tracking\PlayerLifecycleHooks.cs" />
-        <Compile Include="Utils\HarmonyUtils.cs" />
-        <Compile Include="Utils\InventoryUtils.cs" />
-        <Compile Include="Utils\LineEffectController.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="UI\ContainerRecyclingButtonHolder.cs" />
+        <Compile Include="UI\TargetRecyclingButtonHolder.cs" />
+        <Compile Include="UI\UIDragger.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="stageThunderstoreRelease.ps1" />
-      <Content Include="README.md" />
-      <Content Include="ThunderStoreResources\icon.png" />
-      <Content Include="ThunderStoreResources\img.png" />
+      <Content Include="stageThunderStoreAndNexus.ps1" />
       <Content Include="ThunderStoreResources\manifest.json" />
       <Content Include="ThunderStoreResources\README.md" />
-      <Content Include="ThunderStoreResources\succ.gif" />
+      <Content Include="ThunderStoreResources\icon.png" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
