@@ -283,7 +283,7 @@
     <ItemGroup>
         <Compile Include="PluginSettings.cs" />
         <Compile Include="Recycling\Recycler.cs" />
-        <Compile Include="Recycling\RecyclingEntry.cs" />
+        <Compile Include="Recycling\RecyclingYieldEntry.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="UI\ContainerRecyclingButtonHolder.cs" />

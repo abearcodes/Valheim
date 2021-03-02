@@ -8,11 +8,13 @@ namespace ABearCodes.Valheim.SimpleRecycling
         {
             RecyclingRate = config.Bind("General", "RecyclingRate", 0.5f,
                 "Rate at which the resources are recycled. Value must be between 0 and 1.\n" +
-                "The mod always rolls up, so if you were supposed to get 2.5 items, you would only receive 2.");
+                "The mod always rolls *down*, so if you were supposed to get 2.5 items, you would only receive 2.");
             UnstackableItemsAlwaysReturnAtLeastOneResource = config.Bind("General", "UnstackableItemsAlwaysReturnAtLeastOneResource", true,
                 "If enabled and recycling a specific _unstackable_ item would yield 0 of a material,\n" +
                 "instead you will receive 1. If disabled, you get nothing.");
-            
+            PreventZeroResourceYields = config.Bind("General", "PreventZeroResourceYields", true,
+                "If enabled and recycling an item would yield 0 of any material,\n" +
+                "instead you will receive 1. If disabled, you get nothing.");
             ContainerRecyclingEnabled = config.Bind("Recycling on containers", "ContainerRecyclingEnabled",
                 true, "If enabled, the mod will display the container recycling button");
             ContainerRecyclingButtonPositionJsonString = config.Bind("Recycling on containers",
@@ -21,7 +23,7 @@ namespace ABearCodes.Valheim.SimpleRecycling
                 "The last saved recycling button position stored in JSON");
         }
 
-        public ConfigEntry<bool> OnlyContainersNextToChoppingBlocks { get; }
+        public ConfigEntry<bool> PreventZeroResourceYields { get; }
 
         public ConfigEntry<bool> UnstackableItemsAlwaysReturnAtLeastOneResource { get;  }
 

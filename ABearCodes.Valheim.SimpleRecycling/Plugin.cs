@@ -19,6 +19,8 @@ namespace ABearCodes.Valheim.SimpleRecycling
     {
         public static PluginSettings Settings;
         public static ManualLogSource Log;
+        // for shortness and readability
+        public static string Localize(string text) => Localization.instance.Localize(text);
         private ContainerRecyclingButtonHolder _containerRecyclingButton;
 
         private void Awake()
@@ -40,12 +42,8 @@ namespace ABearCodes.Valheim.SimpleRecycling
             var container = (Container) AccessTools.Field(typeof(InventoryGui), "m_currentContainer")
                 .GetValue(InventoryGui.instance);
             if (container == null) return;
-            var recipes = ObjectDB.instance.m_recipes
-                // some recipes are just weird
-                .Where(recipe => Player.m_localPlayer.IsRecipeKnown(recipe?.m_item?.m_itemData?.m_shared?.m_name))
-                .ToList();
             Log.LogDebug($"Player {player.GetPlayerName()} triggered recycling");
-            Recycler.RecycleInventoryForAllRecipes(container.GetInventory(), recipes, player);
+            Recycler.RecycleInventoryForAllRecipes(container.GetInventory(), player);
         }
     }
 }

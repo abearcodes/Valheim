@@ -1,5 +1,6 @@
 $dllPath = ".\bin\Release\ABearCodes.Valheim.SimpleRecycling.dll"
 $thunderStoreResourcesDirPath = ".\ThunderStoreResources\"
+$targetDirPath = ".\releases\"
 
 $manifestPath = "$($thunderStoreResourcesDirPath)manifest.json"
 $iconPath = "$($thunderStoreResourcesDirPath)icon.png"
@@ -17,14 +18,14 @@ $manifest | ConvertTo-Json | Set-Content $manifestPath
 $compress = @{
     Path = $dllPath, $manifestPath, $iconPath, $readmePath
     CompressionLevel = "Optimal"
-    DestinationPath = ".\$($dllName).v$($version).zip"
+    DestinationPath = "$($targetDirPath)$($dllName).v$($version).zip"
 }
 Compress-Archive @compress
 
 $compress = @{
     Path = $dllPath
     CompressionLevel = "Optimal"
-    DestinationPath = ".\$($dllName).Nexus.zip"
+    DestinationPath = "$($targetDirPath)$($dllName).v$($version).Nexus.zip"
 }
 Compress-Archive @compress
 
