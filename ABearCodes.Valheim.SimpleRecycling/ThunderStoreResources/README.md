@@ -92,7 +92,7 @@ NotifyOnSalvagingImpediments = true
 ### 0.0.6
 
 - introduced the option to prevent recycling if item yield after recycling is 0. On by default
-- added notifications for when the mod cannot (or desides not to) recycle. On by default 
+- added notifications for when the mod cannot (or decides not to) recycle. On by default 
 
 ### 0.0.5
 
