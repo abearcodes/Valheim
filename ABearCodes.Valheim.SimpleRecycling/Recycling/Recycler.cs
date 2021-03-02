@@ -77,7 +77,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             var recyclingList = new List<RecyclingEntry>();
             var recyclingRate = Plugin.Settings.RecyclingRate.Value;
             Plugin.Log.LogDebug($"Gathering recycling result for {itemData.m_shared.m_name}");
-            var itemPercentage = itemData.m_stack / itemData.m_shared.m_maxStackSize;
+            var amountToCraftedRecipeAmountPercentage = itemData.m_stack / (double)recipe.m_amount;
             foreach (var resource in recipe.m_resources)
             {
                 var rItemData = resource.m_resItem.m_itemData;
@@ -90,21 +90,20 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                     break;
                 }
 
-                var amount = resource.m_amount * itemPercentage;
-                if (itemData.m_quality > 0)
-                    amount = Enumerable.Range(1, itemData.m_quality)
-                        .Select(level => resource.GetAmount(level))
-                        .Sum();
-                var realAmount = Math.Floor(amount * recyclingRate);
+                var amount = Enumerable.Range(1, itemData.m_quality)
+                    .Select(level => resource.GetAmount(level))
+                    .Sum();
+                
+                var stackCompensated = amount * amountToCraftedRecipeAmountPercentage;
+                var realAmount = Math.Floor(stackCompensated * recyclingRate);
                 var finalAmount = (int)realAmount;
                 if (realAmount < 1 && itemData.m_shared.m_maxStackSize == 1
                                    && Plugin.Settings.UnstackableItemsAlwaysReturnAtLeastOneResource.Value)
                     finalAmount = 1;
-
                 Plugin.Log.LogDebug("Calculations report.\n" +
-                                    $" = = = Input: IQ:{itemData.m_quality}, A:{amount}, RA:{realAmount}: FA:{finalAmount}");
+                                    $" = = = Input: REA:{resource.m_amount} IQ:{itemData.m_quality} STK:{itemData.m_stack}({itemData.m_shared.m_maxStackSize}) SC:{stackCompensated} ATCRAP:{amountToCraftedRecipeAmountPercentage} A:{amount}, RA:{realAmount}: FA:{finalAmount}");
                 recyclingList.Add(
-                    new RecyclingEntry(preFab, (int) finalAmount, rItemData.m_quality, rItemData.m_variant));
+                    new RecyclingEntry(preFab, finalAmount, rItemData.m_quality, rItemData.m_variant));
             }
 
             return recyclingList;
