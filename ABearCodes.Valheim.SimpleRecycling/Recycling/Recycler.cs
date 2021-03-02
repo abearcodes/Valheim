@@ -29,6 +29,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                 foreach (var impediment in analysisContext.Impediments) stringBuilder.AppendLine(impediment);
             }
 
+            if (stringBuilder.ToString().Length == 0 || !Plugin.Settings.NotifyOnSalvagingImpediments.Value) return;
             MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, stringBuilder.ToString());
         }
 
