@@ -13,7 +13,9 @@ Write-Host "Releasing version $version"
 
 $manifest = Get-Content $manifestPath | ConvertFrom-Json
 $manifest.version_number=$version
-$manifest | ConvertTo-Json | Set-Content $manifestPath 
+$manifest | ConvertTo-Json | Set-Content $manifestPath
+
+mkdir $targetDirPath -ErrorAction SilentlyContinue
 
 $compress = @{
     Path = $dllPath, $manifestPath, $iconPath, $readmePath

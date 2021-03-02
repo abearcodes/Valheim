@@ -31,19 +31,18 @@ https://github.com/abearcodes/Valheim/issues/new
 ## Development plans
 
 - introduce a separate buildable "station" to do the uncrafting
-- introduce a "loss" factor when uncrafting, right now uncrafts 1:1
 - add option to uncraft even if recipe is unknown
 
 ## Configurability
 
-```yaml
-## Settings file was created by plugin SimpleRecycling v0.0.4
+```
+## Settings file was created by plugin SimpleRecycling v0.0.6
 ## Plugin GUID: com.github.abearcodes.valheim.simplerecycling
 
 [General]
 
 ## Rate at which the resources are recycled. Value must be between 0 and 1.
-## The mod always rolls up, so if you were supposed to get 2.5 items, you would only receive 2.
+## The mod always rolls *down*, so if you were supposed to get 2.5 items, you would only receive 2.
 # Setting type: Single
 # Default value: 0.5
 RecyclingRate = 0.5
@@ -53,6 +52,12 @@ RecyclingRate = 0.5
 # Setting type: Boolean
 # Default value: true
 UnstackableItemsAlwaysReturnAtLeastOneResource = true
+
+## If enabled and recycling an item would yield 0 of any material,
+## instead you will receive 1. If disabled, you get nothing.
+# Setting type: Boolean
+# Default value: true
+PreventZeroResourceYields = true
 
 [Recycling on containers]
 
@@ -66,11 +71,28 @@ ContainerRecyclingEnabled = true
 # Default value: {\"x\":502.42425537109377,\"y\":147.06060791015626,\"z\":-1.0}
 ContainerButtonPosition = {\"x\":502.42425537109377,\"y\":147.06060791015626,\"z\":-1.0}
 
+[UI]
+
+## If enabled and recycling a specific item runs into any issues, the mod will print a message
+## in the center of the screen (native Valheim notification). At the time of implementation,
+## this happens in the following cases:
+##  - not enough free slots in the inventory to place the resulting resources
+##  - player does not know the recipe for the item
+##  - if enabled, cases when `PreventZeroResourceYields` kicks in and prevent the crafting
+# Setting type: Boolean
+# Default value: true
+NotifyOnSalvagingImpediments = true
+
 
 ```
 
 
 ## Changelog
+
+### 0.0.6
+
+- introduced the option to prevent recycling if item yield after recycling is 0. On by default
+- added notifications for when the mod cannot (or desides not to) recycle. On by default 
 
 ### 0.0.5
 
