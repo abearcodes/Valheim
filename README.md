@@ -5,9 +5,13 @@ A repo for my Valheim mods. Currently only houses CraftingWithContainers.
 ## Mods list
 
 - Crafting with Containers
-  
-  [Click here to check out the README for it for more info](https://github.com/abearcodes/Valheim/tree/master/ABearCodes.Valheim.CraftingWithContainers)
-  
+    
   [Click here for the ThunderStore page](https://valheim.thunderstore.io/package/abearcodes/CraftingWithContainers)
- 
+  
+  This is not the "Crafting **_From_** Containers" mod that can be found on NexusMods, we just kinda started developing it at the same time :) 
 
+- Crafting 
+ 
+  [Click here for the ThunderStore page](https://valheim.thunderstore.io/package/abearcodes/SimpleRecycling/)
+  
+  [Click here for the NexusMods page](https://www.nexusmods.com/valheim/mods/205?tab=posts&BH=1)
