@@ -10,7 +10,7 @@ A repo for my Valheim mods
   
   This is not the "Crafting **_From_** Containers" mod that can be found on NexusMods, we just kinda started developing it at the same time :) 
 
-- Crafting 
+- Simple Recycling
  
   [Click here for the ThunderStore page](https://valheim.thunderstore.io/package/abearcodes/SimpleRecycling/)
   
