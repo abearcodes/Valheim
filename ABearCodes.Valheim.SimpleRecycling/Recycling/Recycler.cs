@@ -19,6 +19,10 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                 var analysisContext = new RecyclingAnalysisContext(item);
                 analysisList.Add(analysisContext);
                 RecycleOneItemInInventory(analysisContext, inventory, player);
+                if (analysisContext.ShouldErrorDumpAnalysis || Plugin.Settings.DebugAlwaysDumpAnalysisContext.Value)
+                {
+                    analysisContext.Dump();
+                }
             }
 
             var stringBuilder = new StringBuilder();
@@ -55,10 +59,14 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             foreach (var entry in analysisContext.Entries)
             {
                 var addedItem = inventory.AddItem(
-                    entry.prefab.name, entry.amount, entry.mQuality,
+                    entry.Prefab.name, entry.Amount, entry.mQuality,
                     entry.mVariant, player.GetPlayerID(), player.GetPlayerName()
                 );
-                if (addedItem != null) continue;
+                if (addedItem != null && entry.Amount < 1 && !Plugin.Settings.PreventZeroResourceYields.Value)
+                {
+                    Plugin.Log.LogDebug("Adding item failed, but player disabled zero resource yields prevention, expected. ");
+                    continue;
+                }
                 Plugin.Log.LogError(
                     "Inventory refused to add item after valid analysis! Check the error from the inventory for details. Will mark analysis for dumping.");
                 analysisContext.ShouldErrorDumpAnalysis = true;
@@ -68,7 +76,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
 
             if (inventory.RemoveItem(item)) return;
             Plugin.Log.LogError(
-                "Inventory refused to add item after valid analysis! Check the error from the inventory for details. Will mark analysis for dumping.");
+                "Inventory refused to remove item after valid analysis! Check the error from the inventory for details. Will mark analysis for dumping.");
             analysisContext.ShouldErrorDumpAnalysis = true;
             analysisContext.Impediments.Add($"Inventory could not remove item {Plugin.Localize(item.m_shared.m_name)}");
         }
@@ -97,7 +105,8 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             }
 
             recipe = foundRecipes.FirstOrDefault();
-            if (!player.IsRecipeKnown(recipe.m_item.m_itemData.m_shared.m_name))
+            if (!player.IsRecipeKnown(recipe.m_item.m_itemData.m_shared.m_name) &&
+                !Plugin.Settings.AllowRecyclingUnknownRecipes.Value)
             {
                 analysisContext.Impediments.Add(
                     $"Recipe for {Localization.instance.Localize(item.m_shared.m_name)} not known.");
@@ -115,8 +124,8 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
         {
             var emptySlotsAmount = inventory.GetEmptySlots();
             var needsSlots = analysisContext.Entries.Sum(entry =>
-                Math.Ceiling(entry.amount /
-                             (double) entry.prefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_maxStackSize));
+                Math.Ceiling(entry.Amount /
+                             (double) entry.Prefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_maxStackSize));
 
             if (emptySlotsAmount >= needsSlots) return;
             analysisContext.Impediments.Add($"Need {needsSlots} slots but only {emptySlotsAmount} were available");
@@ -147,7 +156,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                 var finalAmount = CalculateFinalAmount(itemData, resource, amountToCraftedRecipeAmountPercentage,
                     recyclingRate);
                 analysisContext.Entries.Add(
-                    new RecyclingAnalysisContext.RecyclingYieldEntry(preFab, finalAmount, rItemData.m_quality,
+                    new RecyclingAnalysisContext.RecyclingYieldEntry(preFab, recipe, finalAmount, rItemData.m_quality,
                         rItemData.m_variant));
                 if (Plugin.Settings.PreventZeroResourceYields.Value && finalAmount == 0)
                     analysisContext.Impediments.Add(
@@ -168,7 +177,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                                && Plugin.Settings.UnstackableItemsAlwaysReturnAtLeastOneResource.Value)
                 finalAmount = 1;
             Plugin.Log.LogDebug("Calculations report.\n" +
-                                $" = = = Input: REA:{resource.m_amount} IQ:{itemData.m_quality} STK:{itemData.m_stack}({itemData.m_shared.m_maxStackSize}) SC:{stackCompensated} ATCRAP:{amountToCraftedRecipeAmountPercentage} A:{amount}, RA:{realAmount}: FA:{finalAmount}");
+                                $" = = = Input: REA:{resource.m_amount} IQ:{itemData.m_quality} STK:{itemData.m_stack}({itemData.m_shared.m_maxStackSize}) SC:{stackCompensated} ATCRAP:{amountToCraftedRecipeAmountPercentage} A:{amount}, RA:{realAmount} FA:{finalAmount}");
             return finalAmount;
         }
     }
