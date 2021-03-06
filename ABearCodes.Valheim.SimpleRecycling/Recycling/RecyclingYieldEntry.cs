@@ -28,14 +28,16 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             public readonly int Amount;
             public readonly int mQuality;
             public readonly int mVariant;
+            public readonly bool InitialRecipeHadZero;
 
-            public RecyclingYieldEntry(GameObject prefab, Recipe recipe, int amount, int mQuality, int mVariant)
+            public RecyclingYieldEntry(GameObject prefab, Recipe recipe, int amount, int mQuality, int mVariant, bool initialRecipeHadZero)
             {
                 this.Prefab = prefab;
                 this.Recipe = recipe;
                 this.Amount = amount;
                 this.mQuality = mQuality;
                 this.mVariant = mVariant;
+                this.InitialRecipeHadZero = initialRecipeHadZero;
             }
         }
 

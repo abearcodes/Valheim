@@ -58,20 +58,23 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
         {
             foreach (var entry in analysisContext.Entries)
             {
+                if (entry.Amount == 0 && entry.InitialRecipeHadZero) continue;
                 var addedItem = inventory.AddItem(
                     entry.Prefab.name, entry.Amount, entry.mQuality,
                     entry.mVariant, player.GetPlayerID(), player.GetPlayerName()
                 );
-                if (addedItem != null && entry.Amount < 1 && !Plugin.Settings.PreventZeroResourceYields.Value)
+                if (addedItem != null) continue;
+                
+                if (entry.Amount < 1 && !Plugin.Settings.PreventZeroResourceYields.Value)
                 {
-                    Plugin.Log.LogDebug("Adding item failed, but player disabled zero resource yields prevention, expected. ");
+                    Plugin.Log.LogDebug("Adding item failed, but player disabled zero resource yields prevention, item loss expected. ");
                     continue;
                 }
                 Plugin.Log.LogError(
                     "Inventory refused to add item after valid analysis! Check the error from the inventory for details. Will mark analysis for dumping.");
                 analysisContext.ShouldErrorDumpAnalysis = true;
                 analysisContext.Impediments.Add(
-                    $"Inventory could not add item {Plugin.Localize(item.m_shared.m_name)}");
+                    $"Inventory could not add item {Plugin.Localize(entry.Prefab.name)}");
             }
 
             if (inventory.RemoveItem(item)) return;
@@ -153,32 +156,37 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                     continue;
                 }
 
-                var finalAmount = CalculateFinalAmount(itemData, resource, amountToCraftedRecipeAmountPercentage,
+                var (finalAmount, initialRecipeHadZero) = CalculateFinalAmount(itemData, resource, amountToCraftedRecipeAmountPercentage,
                     recyclingRate);
                 analysisContext.Entries.Add(
                     new RecyclingAnalysisContext.RecyclingYieldEntry(preFab, recipe, finalAmount, rItemData.m_quality,
-                        rItemData.m_variant));
-                if (Plugin.Settings.PreventZeroResourceYields.Value && finalAmount == 0)
+                        rItemData.m_variant, initialRecipeHadZero));
+                if (Plugin.Settings.PreventZeroResourceYields.Value && finalAmount == 0 && !initialRecipeHadZero)
                     analysisContext.Impediments.Add(
                         $"Recycling would yield 0 of {Localization.instance.Localize(resource.m_resItem.m_itemData.m_shared.m_name)}");
             }
         }
 
-        private static int CalculateFinalAmount(ItemDrop.ItemData itemData, Piece.Requirement resource,
+        private static (int Amount, bool InitialRecipeHadZero) CalculateFinalAmount(ItemDrop.ItemData itemData, Piece.Requirement resource,
             double amountToCraftedRecipeAmountPercentage, float recyclingRate)
         {
-            var amount = Enumerable.Range(1, itemData.m_quality)
+            var amountPerLevelSum = Enumerable.Range(1, itemData.m_quality)
                 .Select(level => resource.GetAmount(level))
                 .Sum();
-            var stackCompensated = amount * amountToCraftedRecipeAmountPercentage;
+            if (amountPerLevelSum == 0) return (Amount: 0, InitialRecipeHadZero: true);
+            var stackCompensated = amountPerLevelSum * amountToCraftedRecipeAmountPercentage;
             var realAmount = Math.Floor(stackCompensated * recyclingRate);
             var finalAmount = (int) realAmount;
             if (realAmount < 1 && itemData.m_shared.m_maxStackSize == 1
                                && Plugin.Settings.UnstackableItemsAlwaysReturnAtLeastOneResource.Value)
                 finalAmount = 1;
             Plugin.Log.LogDebug("Calculations report.\n" +
-                                $" = = = Input: REA:{resource.m_amount} IQ:{itemData.m_quality} STK:{itemData.m_stack}({itemData.m_shared.m_maxStackSize}) SC:{stackCompensated} ATCRAP:{amountToCraftedRecipeAmountPercentage} A:{amount}, RA:{realAmount} FA:{finalAmount}");
-            return finalAmount;
+                                $" = = = {resource.m_resItem.m_itemData.m_shared.m_name} - " +
+                                $"REA:{resource.m_amount} APLS: {amountPerLevelSum} IQ:{itemData.m_quality} " +
+                                $"STK:{itemData.m_stack}({itemData.m_shared.m_maxStackSize}) SC:{stackCompensated} " +
+                                $"ATCRAP:{amountToCraftedRecipeAmountPercentage} A:{amountPerLevelSum}, " +
+                                $"RA:{realAmount} FA:{finalAmount}");
+            return (Amount: finalAmount, InitialRecipeHadZero: true);
         }
     }
 }
