@@ -23,7 +23,7 @@ namespace ABearCodes.Valheim.SimpleRecycling
                 "If enabled and recycling an item would yield 0 of any material,\n" +
                 "instead you will receive 1. If disabled, you get nothing.");
             
-            AllowRecyclingUnknownRecipes = config.Bind("General", "RequireRecipeToBeKnown", false,
+            AllowRecyclingUnknownRecipes = config.Bind("General", "AllowRecyclingUnknownRecipes", false,
                 "If enabled, it will allow you to recycle items that you do not know the recipe for yet.\n" +
                 "Disabled by default as this can be cheaty, but sometimes required due to people losing progress.");
             
