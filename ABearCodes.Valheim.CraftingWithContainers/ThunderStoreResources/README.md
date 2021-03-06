@@ -97,6 +97,10 @@ _*for brevity, CwC stands for CraftingWithContainers further on_
 
 # Changelog
 
+### 1.0.9
+
+- fixed a bug where too many items would be removed if player inventory was checked first
+
 ### 1.0.8
 
 - fix Kilns and Furnaces not taking items from containers. No longer requires restart to enable/disable.
