@@ -54,6 +54,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
         public ConfigEntry<bool> LogItemRemovalsToConsole { get; private set; }
         public ConfigEntry<bool> AddExtractionEffectWhenCrafting { get; private set; }
         public ConfigEntry<bool> DebugForcePrintRemovalReport { get; set; }
+        public ConfigEntry<bool> TakeItemsInReverseOrder { get; set; }
 
         private void BindConfig(ConfigFile configFile)
         {
@@ -79,6 +80,10 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 "AddExtractionEffectWhenCrafting", true,
                 "If enabled, when removing items from containers an effect just like the one\n" +
                 "that crafting station extensions (chopping block, tanning rack, etc)");
+            TakeItemsInReverseOrder = configFile.Bind("General",
+                "TakeItemsInReverseOrder", true,
+                "If enabled, will take items from the inventories from the last slot first\n" +
+                "instead of the first slot how the game does for normal item removals");
             // ShowStationExtensionEffect = configFile.Bind("CraftingWithContainers",
             //     "ShowStationExtensionEffect", true,
             //     "Adds a station extension effect to chests. This effect is the one that\n" +
