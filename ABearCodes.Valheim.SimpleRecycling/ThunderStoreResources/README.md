@@ -5,10 +5,6 @@
 
 Adds a button that recycles (uncrafts) items in any container. 
 
-## CRITICAL CHANGES AS OF 0.0.4
-
-### Please read the changelog below. 
-
 ### Key points
 
 - Returns 50% of the resources by default. Configurable via settings. 
@@ -36,7 +32,7 @@ https://github.com/abearcodes/Valheim/issues/new
 ## Configurability
 
 ```
-## Settings file was created by plugin SimpleRecycling v0.0.6
+## Settings file was created by plugin SimpleRecycling v0.0.7
 ## Plugin GUID: com.github.abearcodes.valheim.simplerecycling
 
 [General]
@@ -58,6 +54,12 @@ UnstackableItemsAlwaysReturnAtLeastOneResource = true
 # Setting type: Boolean
 # Default value: true
 PreventZeroResourceYields = true
+
+## If enabled, it will allow you to recycle items that you do not know the recipe for yet.
+## Disabled by default as this can be cheaty, but sometimes required due to people losing progress.
+# Setting type: Boolean
+# Default value: false
+AllowRecyclingUnknownRecipes = false
 
 [Recycling on containers]
 
@@ -83,11 +85,23 @@ ContainerButtonPosition = {\"x\":502.42425537109377,\"y\":147.06060791015626,\"z
 # Default value: true
 NotifyOnSalvagingImpediments = true
 
+[zDebug]
+
+## If enabled will dump a complete detailed recycling report every time. This is taxing in terms
+## of performance and should only be used when debugging issues. 
+# Setting type: Boolean
+# Default value: false
+DebugAlwaysDumpAnalysisContext = false
 
 ```
 
 
 ## Changelog
+
+### 0.0.7
+
+- fixed a bug where recycling an upgraded item with a rate of 1 that used additional resources than the initial recipe (per level rather than initially), would still return that ingredient back
+- fixed some config naming consistency
 
 ### 0.0.6
 

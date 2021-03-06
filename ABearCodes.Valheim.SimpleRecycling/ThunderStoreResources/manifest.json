@@ -1,7 +1,7 @@
 {
     "name":  "SimpleRecycling",
     "description":  "Adds a button that recycles (uncrafts) items in any container",
-    "version_number":  "0.0.6",
+    "version_number":  "0.0.7",
     "website_url":  "https://github.com/abearcodes/Valheim",
     "dependencies":  [
                          "denikson-BepInExPack_Valheim-5.4.600"
