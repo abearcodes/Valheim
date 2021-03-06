@@ -20,23 +20,16 @@ namespace ABearCodes.Valheim.CraftingWithContainers
         {
             Log = Logger;
         }
-        private Harmony harmony;
         public static ManualLogSource Log { get; private set; }
         public static PluginSettings Settings { get; private set; }
-
-        private void OnDestroy()
-        {
-            harmony.UnpatchSelf();
-        }
-
+        
         private void Awake()
         {
             Settings = new PluginSettings(Config);
 #if DEBUG
             HarmonyFileLog.Enabled = true;   
 #endif
-            
-            harmony = new Harmony("ABearCodes.Valheim.CraftingWithContainers");
+            var harmony = new Harmony("ABearCodes.Valheim.CraftingWithContainers");
             CompatibilityFixer.Apply(harmony);
             harmony.PatchAll();
         }

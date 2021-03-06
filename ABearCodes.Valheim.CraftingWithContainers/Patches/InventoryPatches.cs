@@ -34,13 +34,13 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
         }
         [HarmonyPatch(typeof(Inventory), "GetItem", typeof(string))]
         [HarmonyPrefix]
-        public static bool GetItem(Inventory __instance, string name, List<ItemDrop.ItemData> ___m_inventory, ItemDrop.ItemData __result)
+        public static bool GetItemReversed(Inventory __instance, string name, List<ItemDrop.ItemData> ___m_inventory, ref ItemDrop.ItemData __result)
         {
             if (!Plugin.Settings.TakeItemsInReverseOrder.Value) return true;
 
             for (var index = ___m_inventory.Count - 1; index >= 0; index--)
             {
-                ItemDrop.ItemData itemData = ___m_inventory[index];
+                var itemData = ___m_inventory[index];
                 if (itemData.m_shared.m_name != name) continue;
                 __result = itemData;
                 return false;

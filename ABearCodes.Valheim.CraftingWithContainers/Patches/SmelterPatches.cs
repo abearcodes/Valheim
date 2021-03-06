@@ -1,6 +1,7 @@
 ﻿using ABearCodes.Valheim.CraftingWithContainers.Crafting;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using HarmonyLib;
+using UnityEngine;
 
 namespace ABearCodes.Valheim.CraftingWithContainers.Patches
 {

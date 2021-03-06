@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 
 namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
 {
@@ -33,7 +31,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
 
         public static List<TrackedContainer> GetViableContainersInRangeForPlayer(Player player, float range) => 
             ContainerSearcher.SearchForViablePlayerContainers(_containers, player, range);
-        
     }
 
     public readonly struct TrackedContainer
