@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABearCodes.Valheim.SimpleAu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABearCodes.Valheim.Recycler", "ABearCodes.Valheim.SimpleRecycling\ABearCodes.Valheim.SimpleRecycling.csproj", "{C764F590-96E0-4221-A2D5-3AFD213B423D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABearCodes.Valheim.ThinkingWithPortals", "ABearCodes.Valheim.ThinkingWithPortals\ABearCodes.Valheim.ThinkingWithPortals.csproj", "{C75F034F-2EE8-4CED-95F9-ABDF93B9F2D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,9 +23,13 @@ Global
 		{C764F590-96E0-4221-A2D5-3AFD213B423B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C764F590-96E0-4221-A2D5-3AFD213B423B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C764F590-96E0-4221-A2D5-3AFD213B423B}.Release|Any CPU.Build.0 = Release|Any CPU
-        {C764F590-96E0-4221-A2D5-3AFD213B423D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-        {C764F590-96E0-4221-A2D5-3AFD213B423D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-        {C764F590-96E0-4221-A2D5-3AFD213B423D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-        {C764F590-96E0-4221-A2D5-3AFD213B423D}.Release|Any CPU.Build.0 = Release|Any CPU
+								{C764F590-96E0-4221-A2D5-3AFD213B423D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+								{C764F590-96E0-4221-A2D5-3AFD213B423D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+								{C764F590-96E0-4221-A2D5-3AFD213B423D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+								{C764F590-96E0-4221-A2D5-3AFD213B423D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C75F034F-2EE8-4CED-95F9-ABDF93B9F2D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C75F034F-2EE8-4CED-95F9-ABDF93B9F2D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C75F034F-2EE8-4CED-95F9-ABDF93B9F2D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C75F034F-2EE8-4CED-95F9-ABDF93B9F2D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
