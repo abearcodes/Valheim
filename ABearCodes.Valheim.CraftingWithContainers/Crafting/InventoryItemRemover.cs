@@ -18,7 +18,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
 
             if (leftToRemove > 0 && Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
             {
-                var itemsRemoved = player.GetInventory().RemoveItemAsMuchAsPossible(name, amount);
+                var itemsRemoved = player.GetInventory().RemoveItemAsMuchAsPossible(name, leftToRemove);
                 leftToRemove -= itemsRemoved;
                 if (itemsRemoved > 0)
                     report.Removals.Add(new RemovalReport.RemovalReportEntry(true, null, itemsRemoved));
@@ -38,7 +38,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
 
             if (leftToRemove > 0 && !Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
             {
-                var itemsRemoved = player.GetInventory().RemoveItemAsMuchAsPossible(name, amount);
+                var itemsRemoved = player.GetInventory().RemoveItemAsMuchAsPossible(name, leftToRemove);
                 leftToRemove -= itemsRemoved;
                 if (itemsRemoved > 0)
                     report.Removals.Add(new RemovalReport.RemovalReportEntry(true, null, itemsRemoved));
