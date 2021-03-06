@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using ABearCodes.Valheim.CraftingWithContainers.Patches;
@@ -44,14 +45,15 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
                     report.Removals.Add(new RemovalReport.RemovalReportEntry(true, null, itemsRemoved));
             }
 
-            if (leftToRemove != 0)
+            if (leftToRemove != 0 || Plugin.Settings.DebugForcePrintRemovalReport.Value)
             {
                 var nearbyPlayers = new List<Character>();
                 Character.GetCharactersInRange(player.transform.position, Plugin.Settings.ContainerLookupRange.Value,
                     nearbyPlayers);
-                Plugin.Log.LogError("Invalid state reached! You might want to report this to the mod developer.\n" +
+                var playerCount = nearbyPlayers.Count(character => character.IsPlayer());
+                Plugin.Log.LogWarning("Invalid state reached! You might want to report this to the mod developer.\n" +
                                     $"When removing {amount} of {name}, amount of resources left to remove was still {leftToRemove}\n" +
-                                    $"Containers: {containers.Count}. Players: {nearbyPlayers.Count}.\n" +
+                                    $"Containers: {containers.Count}. Players: {playerCount}.\n" +
                                     $"{report.GetReportString()}");
             }
         }

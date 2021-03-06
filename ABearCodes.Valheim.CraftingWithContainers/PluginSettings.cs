@@ -53,6 +53,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
         public ConfigEntry<bool> AllowTakeFuelForFireplace { get; private set; }
         public ConfigEntry<bool> LogItemRemovalsToConsole { get; private set; }
         public ConfigEntry<bool> AddExtractionEffectWhenCrafting { get; private set; }
+        public ConfigEntry<bool> DebugForcePrintRemovalReport { get; set; }
 
         private void BindConfig(ConfigFile configFile)
         {
@@ -120,6 +121,9 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 "DebugViableContainerIndicatorEnabled", false,
                 "Shows nearby viable containers by adding a small indicator on containers that are\n" +
                 "considered viable according to the current settings.");
+            DebugForcePrintRemovalReport = configFile.Bind("zDebug",
+                "DebugAlwaysPrintRemovalReport", false,
+                "If enabled, prints the removal reports always and not only when issues happen");
         }
 
         private void NotifyNeedsRestart(object sender, EventArgs e)
