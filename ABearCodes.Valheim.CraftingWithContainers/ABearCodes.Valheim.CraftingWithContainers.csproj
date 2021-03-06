@@ -307,7 +307,6 @@
       <Content Include="stageThunderstoreRelease.ps1" />
       <Content Include="README.md" />
       <Content Include="ThunderStoreResources\icon.png" />
-      <Content Include="ThunderStoreResources\img.png" />
       <Content Include="ThunderStoreResources\manifest.json" />
       <Content Include="ThunderStoreResources\README.md" />
       <Content Include="ThunderStoreResources\succ.gif" />

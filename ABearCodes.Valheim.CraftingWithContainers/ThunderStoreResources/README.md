@@ -42,6 +42,10 @@ The list below only highlights settings with major impact.
 
     Range in which the mod searches for containers. Base range is equal to the range of the crafting table (20). Will not take from containers that are not currently loaded into memory, so setting this value to big numbers might not yield the expected result.
 
+- **TakeFromPlayerInventoryFirst**
+    
+    Whether or not the mod should try to take from the player inventory first. Do note that Kilns and Furnaces will always check your inventory first.  
+
 - **AddExtractionEffectWhenCrafting**
   
     _Enabled by default_  
@@ -93,56 +97,62 @@ _*for brevity, CwC stands for CraftingWithContainers further on_
 
 # Changelog
 
+### 1.0.8
+
+- fix Kilns and Furnaces not taking items from containers. No longer requires restart to enable/disable.
+- fix plugin error reporter logging errors when using resources from the player inventory even though everything was working properly
+- items are now taken
+
 ### v1.0.7
 
-- Temp fix for boat/cart duping. Now requires the player to be the user of it for the container to be considered viable. "Driving" the cart or boats or interacting with the container will be considered "using" it.  
+- temp fix for boat/cart duping. Now requires the player to be the user of it for the container to be considered viable. "Driving" the cart or boats or interacting with the container will be considered "using" it.  
 
 ### v1.0.6
 
-- Fix Nullreference exception when Valheim plus is not present 
+- fix Nullreference exception when Valheim plus is not present 
 
 ### v1.0.5
 
-- Compatibility fix for crafting requirements indicator 
-    - Reverts a patch introduced by ValheimPlus and ImprovedBuildHud on `InventoryGui.SetupRequirement` that would break the crafting requirements indicator. 
+- compatibility fix for crafting requirements indicator 
+    - reverts a patch introduced by ValheimPlus and ImprovedBuildHud on `InventoryGui.SetupRequirement` that would break the crafting requirements indicator. 
 
 ### v1.0.4
 
 Big changes! Pretty much a rewrite!
 
-- _**No longer requires a crafting station**_
-- _**Now supports building too!**_
-- _**No longer patches Inventory methods directly.**_
-    - Instead it reroutes required calls to Inventory to a static class.
-    - This should help with mod compatibility as the initial methods are untouched. This will cause mods not to use the "CraftingFromContainers" functionality, but both mods should work properly.   
-- Toggleable Smelter, Kiln and Fireplace fuel consumption from nearby containers
-- Added indicator to how many resources of a type the player has
+- _**no longer requires a crafting station**_
+- _**now supports building too!**_
+- _**no longer patches Inventory methods directly.**_
+    - instead it reroutes required calls to Inventory to a static class.
+    - this should help with mod compatibility as the initial methods are untouched. This will cause mods not to use the "CraftingFromContainers" functionality, but both mods should work properly.   
+- toggleable Smelter, Kiln and Fireplace fuel consumption from nearby containers
+- added indicator to how many resources of a type the player has
 
   ![image](https://i.imgur.com/hDS5fyL.png)
   
-- Swapped previous "crafting station extension" effect for a "sucking" effect when the crafting actually takes place
-- Option to take resources from player inventory first removed
-- Option to log crafting events to Console window (via `F5`)
+- swapped previous "crafting station extension" effect for a "sucking" effect when the crafting actually takes place
+- option to take resources from player inventory first removed
+- option to log crafting events to Console window (via `F5`)
 
   ![!image](https://i.imgur.com/VQ1Qkpb.png)
 
  
 ## 1.0.3
   
- - Partial multiplayer workaround for containers not updating. Does not fix: ships, moving carts,
+ - partial multiplayer workaround for containers not updating. Does not fix: ships, moving carts,
  dragging resources at the last possible second.    
  
 ## 1.0.2
  
- - Fixed a bug of not removing items when the amount of items is the exact
+ - fixed a bug of not removing items when the amount of items is the exact
  one needed.
  
  - Fixed a bug where tracker would attempt to remove effects from non existing entries 
  
 ## 1.0.1
  
- Changed GitHub URL in README
+ - changed GitHub URL in README
  
 ## 1.0.0 
  
- Initial release
+ - Initial release
