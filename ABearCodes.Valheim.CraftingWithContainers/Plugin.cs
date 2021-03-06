@@ -1,4 +1,5 @@
-﻿using ABearCodes.Valheim.CraftingWithContainers.Patches;
+﻿using System;
+using ABearCodes.Valheim.CraftingWithContainers.Patches;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using BepInEx;
 using BepInEx.Logging;
@@ -19,9 +20,14 @@ namespace ABearCodes.Valheim.CraftingWithContainers
         {
             Log = Logger;
         }
-
+        private Harmony harmony;
         public static ManualLogSource Log { get; private set; }
         public static PluginSettings Settings { get; private set; }
+
+        private void OnDestroy()
+        {
+            harmony.UnpatchSelf();
+        }
 
         private void Awake()
         {
@@ -29,7 +35,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers
 #if DEBUG
             HarmonyFileLog.Enabled = true;   
 #endif
-            var harmony = new Harmony("ABearCodes.Valheim.CraftingWithContainers");
+            
+            harmony = new Harmony("ABearCodes.Valheim.CraftingWithContainers");
             CompatibilityFixer.Apply(harmony);
             harmony.PatchAll();
         }

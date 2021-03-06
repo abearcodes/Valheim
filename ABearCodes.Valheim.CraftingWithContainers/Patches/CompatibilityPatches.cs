@@ -21,9 +21,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
             var patchInfo = Harmony.GetPatchInfo(invSetupReqRef);
             if (patchInfo == null) return;
             foreach (var prefix in patchInfo.Prefixes)
-            {
                 harmony.Unpatch(invSetupReqRef, HarmonyPatchType.Prefix, prefix.owner);
-            }
         }
     }
 }

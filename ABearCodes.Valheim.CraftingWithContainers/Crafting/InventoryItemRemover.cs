@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using ABearCodes.Valheim.CraftingWithContainers.Patches;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
@@ -52,9 +51,9 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
                     nearbyPlayers);
                 var playerCount = nearbyPlayers.Count(character => character.IsPlayer());
                 Plugin.Log.LogWarning("Invalid state reached! You might want to report this to the mod developer.\n" +
-                                    $"When removing {amount} of {name}, amount of resources left to remove was still {leftToRemove}\n" +
-                                    $"Containers: {containers.Count}. Players: {playerCount}.\n" +
-                                    $"{report.GetReportString()}");
+                                      $"When removing {amount} of {name}, amount of resources left to remove was still {leftToRemove}\n" +
+                                      $"Containers: {containers.Count}. Players: {playerCount}.\n" +
+                                      $"{report.GetReportString()}");
             }
         }
 
@@ -97,16 +96,18 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
 
             public string GetReportString(bool colorize = false)
             {
-                const string removedHeaderFormat =  "Removed {0} \"{1}\". Touched {2} inventories\n";
-                const string removedHeaderFormatColor =  "Removed <color=lightblue>{0}</color> <color=orange>\"{1}\"</color>. Touched <color=lightblue>{2}</color> inventories\n";
+                const string removedHeaderFormat = "Removed {0} \"{1}\". Touched {2} inventories\n";
+                const string removedHeaderFormatColor =
+                    "Removed <color=lightblue>{0}</color> <color=orange>\"{1}\"</color>. Touched <color=lightblue>{2}</color> inventories\n";
                 const string playerEntryFormat = "Player: {0}\n";
                 const string playerEntryFormatColor = "<color=cyan>Player</color>: <color=lightblue>{0}</color>\n";
                 const string containerEntryFormat = "{0}: {1}\n";
                 const string containerEntryFormatColor = "<color=cyan>{0}</color>: <color=lightblue>{1}</color>\n";
-                
+
                 var sb = new StringBuilder();
-                sb.AppendFormat(colorize ? removedHeaderFormatColor : removedHeaderFormat, Amount, Localization.instance.Localize(ItemName), Removals.Count);
-                
+                sb.AppendFormat(colorize ? removedHeaderFormatColor : removedHeaderFormat, Amount,
+                    Localization.instance.Localize(ItemName), Removals.Count);
+
                 foreach (var removal in Removals)
                 {
                     if (removal.UsedPlayerInventory)
@@ -123,6 +124,24 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
 
                 return sb.ToString();
             }
+        }
+
+        public static void RemoveFromSpecificContainer(ItemDrop.ItemData item, TrackedContainer usedContainer,
+            Player player)
+        {
+            Plugin.Log.LogDebug(
+                $"{player.GetPlayerName()} requested removal of {item.m_shared.m_name} from {usedContainer.OwningPiece.m_name}");
+            usedContainer.Container.GetInventory().RemoveItem(item, 1);
+            UpdateContainerNetworkData(player, usedContainer.Container);
+            SpawnEffect(player, usedContainer);
+        }
+
+        public static void SpawnEffect(Player player, TrackedContainer container)
+        {
+            Plugin.Log.LogDebug(
+                $"Attaching effect between player {player.GetPlayerName()} and {container.Container.m_name}({container.ZNetView.GetZDO().m_uid})");
+            LineEffectCreator.Create(container.Container.transform.position, player.transform,
+                0.1f, 0.01f, 0.3f, 0.5f);
         }
     }
 }

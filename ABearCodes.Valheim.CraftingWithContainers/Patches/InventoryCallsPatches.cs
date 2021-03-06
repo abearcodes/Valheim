@@ -41,7 +41,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
                     new CodeInstruction(OpCodes.Callvirt,
                         AccessTools.Method(typeof(Inventory), "RemoveItem", new[] {typeof(string), typeof(int)})),
                     new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InventoryDetours), "RemoveItemArea")))
-                
             };
 
         [HarmonyTargetMethods]
@@ -69,13 +68,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
                     new[] {typeof(Humanoid), typeof(bool)});
             }
 
-            // Smelter / Kiln (count)
-            if (Plugin.Settings.AllowTakeFuelForKilnAndFurnace.Value)
-            {
-                yield return AccessTools.Method(typeof(Smelter), "OnAddFuel",
-                    new[] {typeof(Switch), typeof(Humanoid), typeof(ItemDrop.ItemData)});
-            }
-
             /*
              * Last updated 0.146.8
              * Considered unimplemented patches:
@@ -98,7 +90,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
             HarmonyUtils.LogDebugBuildOnly($"Transpiler patching {method.DeclaringType.Name}::{method}");
             var instructionsList = instructions.ToList();
             var patchCount = 0;
-            
+
             for (var i = instructionsList.Count - 1; i >= 0; i--)
             {
                 var ins = instructionsList[i];
@@ -114,12 +106,11 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
             }
 
             HarmonyUtils.LogDebugBuildOnly($"Patch count {patchCount}");
-            if (patchCount == 0){
+            if (patchCount == 0)
                 Plugin.Log.LogError(
                     "Counting/deducting patching was not successful. CratingWithContainers will not work properly if at all.\n" +
                     $"Dumping initial instruction list:\n{string.Join("\n", instructionsList.Select((instruction, i) => $" {i} - {instruction}"))}");
-            }
-            
+
             return instructionsList;
         }
     }

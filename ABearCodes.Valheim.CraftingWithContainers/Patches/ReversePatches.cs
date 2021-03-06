@@ -50,11 +50,39 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Patches
         }
 
         [HarmonyReversePatch]
-        [HarmonyPatch(typeof(Chat), "AddString", 
+        [HarmonyPatch(typeof(Chat), "AddString",
             typeof(string), typeof(string), typeof(Talker.Type))]
         public static void AddString(this Chat instance, string user, string text, Talker.Type type)
         {
             throw new NotImplementedException("Stub");
+        }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(Smelter), "GetFuel")]
+        public static float GetFuel(this Smelter instance)
+        {
+            throw new NotImplementedException("Stub");
+        }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(Smelter), "FindCookableItem", typeof(Inventory))]
+        public static ItemDrop.ItemData FindCookableItem(this Smelter instance, Inventory inventory)
+        {
+            throw new NotImplementedException("Stub");
+        }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(Smelter), "IsItemAllowed", typeof(string))]
+        public static bool IsItemAllowed(this Smelter instance, string itemName)
+        {
+            throw new NotImplementedException("Stub");
+        }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(Smelter), "GetQueueSize")]
+        public static int GetQueueSize(this Smelter instance)
+        {
+            throw new NotImplementedException("");
         }
     }
 }

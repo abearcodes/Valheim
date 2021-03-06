@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
-using HarmonyLib;
-using UnityEngine;
-using ABearCodes.Valheim.CraftingWithContainers.Patches;
-using ABearCodes.Valheim.CraftingWithContainers.Utils;
 using JetBrains.Annotations;
-using Object = UnityEngine.Object;
 
 namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
 {
@@ -65,7 +58,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
                     .Where(removal => removal.TrackedContainer.HasValue))
                 {
                     // ReSharper disable once PossibleInvalidOperationException
-                    SpawnEffect(player, removal.TrackedContainer.Value);
+                    InventoryItemRemover.SpawnEffect(player, removal.TrackedContainer.Value);
                 }
             }
             
@@ -74,12 +67,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Crafting
             {
                 Console.instance.Print($"{removalReport.GetReportString(true)}");
             }
-        }
-        private static void SpawnEffect(Player player, TrackedContainer container)
-        {
-            Plugin.Log.LogDebug($"Attaching effect between player {player.GetPlayerName()} and {container.Container.m_name}({container.ZNetView.GetZDO().m_uid})");
-            LineEffectCreator.Create(container.Container.transform.position, player.transform,
-                0.1f, 0.01f, 0.3f, 0.5f);
         }
     }
 }
