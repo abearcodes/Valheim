@@ -11,7 +11,7 @@ namespace ABearCodes.Valheim.SimpleRecycling
 {
     [BepInPlugin("com.github.abearcodes.valheim.simplerecycling",
         "SimpleRecycling",
-        "0.0.7")]
+        "0.0.8")]
     public class Plugin : BaseUnityPlugin
     {
         public static PluginSettings Settings;

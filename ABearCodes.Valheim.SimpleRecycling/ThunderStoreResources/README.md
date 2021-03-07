@@ -98,6 +98,11 @@ DebugAlwaysDumpAnalysisContext = false
 
 ## Changelog
 
+### 0.0.8
+
+- added new experimental UI that adds a new tab to the crafting station. Enabled via settings by setting `EnableExperimentalCraftingTabUI` to true
+    ![new ui](https://i.imgur.com/9ZyxBN8.png)
+
 ### 0.0.7
 
 - fixed a bug where recycling an upgraded item with a rate of 1 that used additional resources than the initial recipe (per level rather than initially), would still return that ingredient back
