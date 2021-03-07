@@ -16,7 +16,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         private bool _prefired = false;
         private Text _textComponent;
         private Image _imageComponent;
-        private List<RecyclingAnalysisContext> recyclingAnalysisContexts = new List<RecyclingAnalysisContext>();
+        private List<RecyclingAnalysisContext> _recyclingAnalysisContexts = new List<RecyclingAnalysisContext>();
 
         private void Start()
         {
@@ -27,18 +27,16 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         {
             if (InventoryGui.instance == null) return;
             if (_recyclingTabButtonComponent == null) SetupTabButton();
+            if (_recyclingTabButtonGameObject.activeSelf != Plugin.Settings.EnableExperimentalCraftingTabUI.Value)
+            {
+                _recyclingTabButtonGameObject.SetActive(Plugin.Settings.EnableExperimentalCraftingTabUI.Value);
+            }
         }
 
         private void OnDestroy()
         {
             Debug.Log("Destroying... 1");
             Destroy(_recyclingTabButtonGameObject.gameObject);
-        }
-
-        private void FixedUpdate()
-        {
-            if (_recyclingTabButtonComponent == null) return;
-            // if(!InventoryGui.instance.IsContainerOpen() && _prefired) SetButtonState(false);
         }
 
         private void SetupTabButton()
@@ -86,7 +84,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             UpdateCraftingPanel();
         }
 
-        private void UpdateCraftingPanel()
+        public void UpdateCraftingPanel()
         {
             var igui = InventoryGui.instance;
             var localPlayer = Player.m_localPlayer;
@@ -102,10 +100,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             else
                 igui.m_tabUpgrade.gameObject.SetActive(true);
 
-            var available = new List<Recipe>();
-            localPlayer.GetAvailableRecipes(ref available);
-            Plugin.Log.LogDebug($"Found {available.Count} recipes");
-            UpdateRecyclingList(available);
+            UpdateRecyclingList();
 
 
             if (igui.get_m_availableRecipes().Count > 0)
@@ -119,9 +114,8 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                 igui.SetRecipe(-1, true);
         }
 
-        private void UpdateRecyclingList(List<Recipe> available)
+        private void UpdateRecyclingList()
         {
-            // todo: add check if the user knows the recipe based on this list
             var localPlayer = Player.m_localPlayer;
             var igui = InventoryGui.instance;
             igui.get_m_availableRecipes().Clear();
@@ -130,11 +124,11 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             foreach (var recipeElement in m_recipeList) Destroy(recipeElement);
             m_recipeList.Clear();
 
-            recyclingAnalysisContexts.Clear();
+            _recyclingAnalysisContexts.Clear();
             var validRecycles = Recycler.GetRecyclingAnalysisForInventory(localPlayer.GetInventory(), localPlayer)
                 .Where(context => context.Recipe != null);
-            recyclingAnalysisContexts.AddRange(validRecycles);
-            foreach (var context in recyclingAnalysisContexts)
+            _recyclingAnalysisContexts.AddRange(validRecycles);
+            foreach (var context in _recyclingAnalysisContexts)
             {
                 if (context.Recipe == null) continue;
                 AddRecipeToList(context, m_recipeList);
@@ -160,7 +154,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             component1.color = context.Impediments.Count == 0 ? Color.white : new Color(1f, 0.0f, 1f, 0.0f);
             var component2 = element.transform.Find("name").GetComponent<Text>();
             var str = Localization.instance.Localize(context.Item.m_shared.m_name);
-            if (context.Item.m_stack > 1)
+            if (context.Item.m_stack > 1 && context.Item.m_shared.m_maxStackSize > 1)
                 str = str + " x" + context.Item.m_stack;
             component2.text = str;
             component2.color = context.Impediments.Count == 0 ? Color.white : new Color(0.66f, 0.66f, 0.66f, 1f);
@@ -181,7 +175,6 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
 
             element.GetComponent<Button>().onClick.AddListener(() => igui.OnSelectedRecipe(element));
             m_recipeList.Add(element);
-            // todo implement available recipes
             igui.get_m_availableRecipes()
                 .Add(new KeyValuePair<Recipe, ItemDrop.ItemData>(context.Recipe, context.Item));
         }
@@ -196,6 +189,8 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
 
         public void SetActive(bool active)
         {
+            if (!Plugin.Settings.EnableExperimentalCraftingTabUI.Value) return;
+            
             _recyclingTabButtonGameObject.SetActive(active);
         }
 
@@ -203,15 +198,23 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         {
             //todo: optimize reflection calls
             var igui = InventoryGui.instance;
+            
+            var selectedRecipeIndex = igui.GetSelectedRecipeIndex();
+            if (selectedRecipeIndex != -1 && selectedRecipeIndex < _recyclingAnalysisContexts.Count)
+            {
+                var context = _recyclingAnalysisContexts[selectedRecipeIndex];
+                var newContext = new RecyclingAnalysisContext(context.Item);
+                Recycler.TryAnalyzeOneItem(newContext, player.GetInventory(), player);
+                _recyclingAnalysisContexts[selectedRecipeIndex] = newContext;
+            }
+
             var currentCraftingStation = player.GetCurrentCraftingStation();
             if ((bool) currentCraftingStation)
             {
                 igui.m_craftingStationName.text = Localization.instance.Localize(currentCraftingStation.m_name);
                 igui.m_craftingStationIcon.gameObject.SetActive(true);
                 igui.m_craftingStationIcon.sprite = currentCraftingStation.m_icon;
-                // igui.m_craftingStationLevel.text = currentCraftingStation.GetLevel().ToString();
-                // igui.m_craftingStationLevel.text = currentCraftingStation.GetLevel().ToString();
-                igui.m_craftingStationLevel.text = "∞";
+                igui.m_craftingStationLevel.text = currentCraftingStation.GetLevel().ToString();
                 igui.m_craftingStationLevelRoot.gameObject.SetActive(true);
             }
             else
@@ -221,9 +224,9 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                 igui.m_craftingStationLevelRoot.gameObject.SetActive(false);
             }
 
-            if ((bool) igui.get_m_selectedRecipe().Key)
+            if (igui.get_m_selectedRecipe().Key)
             {
-                var analysisContext = recyclingAnalysisContexts[igui.GetSelectedRecipeIndex()];
+                var analysisContext = _recyclingAnalysisContexts[igui.GetSelectedRecipeIndex()];
                 igui.m_recipeIcon.enabled = true;
                 igui.m_recipeName.enabled = true;
                 igui.m_recipeDecription.enabled = true;
@@ -234,28 +237,23 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                     .m_icons[itemData != null ? itemData.m_variant : igui.get_m_selectedVariant()];
                 string str =
                     Localization.instance.Localize(igui.get_m_selectedRecipe().Key.m_item.m_itemData.m_shared.m_name);
-                if (igui.get_m_selectedRecipe().Key.m_amount > 1)
-                    str = str + " x" + (object) igui.get_m_selectedRecipe().Key.m_amount;
+                if (analysisContext.Item.m_stack > 1)
+                    str = str + " x" + analysisContext.Item.m_stack;
                 igui.m_recipeName.text = str;
-                // igui.m_recipeDecription.text = Localization.instance.Localize(
-                //     ItemDrop.ItemData.GetTooltip(igui.get_m_selectedRecipe().Key.m_item.m_itemData, num, true));
+                igui.m_recipeDecription.text = Localization.instance.Localize(
+                ItemDrop.ItemData.GetTooltip(igui.get_m_selectedRecipe().Key.m_item.m_itemData, num, true));
                 if (analysisContext.Impediments.Count == 0)
-                    igui.m_recipeDecription.text = "\nAll requirements fulfilled!";
+                    igui.m_recipeDecription.text = "\nAll requirements are <color=orange>fulfilled</color>";
                 else
-                    igui.m_recipeDecription.text = $"\nCannot recycle due to the following impediments:\n" +
-                                                   $"{string.Join("\n", analysisContext.Impediments)}";
+                    igui.m_recipeDecription.text = $"\nRecycling blocked by these reasons:\n\n<size=10>" +
+                                                   $"{string.Join("\n", analysisContext.Impediments)}" +
+                                                   $"</size>";
                 if (itemData != null)
                 {
                     igui.m_itemCraftType.gameObject.SetActive(true);
-                    if (itemData.m_quality >= itemData.m_shared.m_maxQuality)
-                        igui.m_itemCraftType.text = Localization.instance.Localize("$inventory_maxquality");
-                    else
-                        // igui.m_itemCraftType.text = Localization.instance.Localize("$inventory_upgrade",
-                        //     Localization.instance.Localize(itemData.m_shared.m_name),
-                        //     (itemData.m_quality + 1).ToString());
-                        igui.m_itemCraftType.text =
-                            Localization.instance.Localize(
-                                $"Recycle {itemData.m_shared.m_name} of quality {itemData.m_quality}");
+                    igui.m_itemCraftType.text =
+                        Localization.instance.Localize(
+                            $"Recycle {itemData.m_shared.m_name} of quality {itemData.m_quality}");
                 }
                 else
                     igui.m_itemCraftType.gameObject.SetActive(false);
@@ -264,37 +262,15 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                     igui.get_m_selectedRecipe().Key.m_item.m_itemData.m_shared.m_variants > 1 &&
                     igui.get_m_selectedRecipe().Value == null);
                 SetupRequirementList(analysisContext);
-                int requiredStationLevel = igui.get_m_selectedRecipe().Key.GetRequiredStationLevel(num);
-                CraftingStation requiredStation = igui.get_m_selectedRecipe().Key.GetRequiredStation(num);
-                if (requiredStation != null & allowedQuality)
-                {
-                    igui.m_minStationLevelIcon.gameObject.SetActive(true);
-                    igui.m_minStationLevelText.text = requiredStationLevel.ToString();
-                    if (currentCraftingStation == null || currentCraftingStation.GetLevel() < requiredStationLevel)
-                        igui.m_minStationLevelText.color = (double) Mathf.Sin(Time.time * 10f) > 0.0
-                            ? Color.red
-                            : Color.white;
-                    //todo: patch color
-                    // : igui.m_minStationLevelBasecolor;
-                    else
-                        igui.m_minStationLevelText.color = Color.white;
-                    //todo: patch color
-                    // igui.m_minStationLevelText.color = igui.m_minStationLevelBasecolor;
-                }
-                else
-                    igui.m_minStationLevelIcon.gameObject.SetActive(false);
                 
-                bool flag1 = player.HaveRequirements(igui.get_m_selectedRecipe().Key, false, num);
-                bool flag2 = igui.get_m_selectedRecipe().Value != null || player.GetInventory().HaveEmptySlot();
-                bool flag3 = !(bool) requiredStation ||
-                             (bool) currentCraftingStation && currentCraftingStation.CheckUsable(player, false);
+                igui.m_minStationLevelIcon.gameObject.SetActive(false);
                 igui.m_craftButton.interactable = analysisContext.Impediments.Count == 0;
                 igui.m_craftButton.GetComponentInChildren<Text>().text = "Recycle";
-                igui.m_craftButton.GetComponent<UITooltip>().m_text = flag2
-                    ? (flag1
-                        ? (flag3 ? "" : Localization.instance.Localize("$msg_missingstation"))
-                        : Localization.instance.Localize("$msg_missingrequirement"))
-                    : Localization.instance.Localize("$inventory_full");
+                if(analysisContext.Impediments.Count == 0)
+                    igui.m_craftButton.GetComponent<UITooltip>().m_text = "";
+                else
+                    igui.m_craftButton.GetComponent<UITooltip>().m_text = Localization.instance.Localize("$msg_missingrequirement");
+                
             }
             else
             {
@@ -311,43 +287,50 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                 igui.m_craftButton.interactable = false;
             }
 
-            // if ((double) igui.m_craftTimer < 0.0)
-            // {
-            //   igui.m_craftProgressPanel.gameObject.SetActive(false);
-            //   igui.m_craftButton.gameObject.SetActive(true);
-            // }
-            // else
-            // {
-            //   igui.m_craftButton.gameObject.SetActive(false);
-            //   igui.m_craftProgressPanel.gameObject.SetActive(true);
-            //   igui.m_craftProgressBar.SetMaxValue(igui.m_craftDuration);
-            //   igui.m_craftProgressBar.SetValue(igui.m_craftTimer);
-            //   igui.m_craftTimer += dt;
-            //   if ((double) igui.m_craftTimer < (double) igui.m_craftDuration)
-            //     return;
-            //   igui.DoCrafting(player);
-            //   igui.m_craftTimer = -1f;
-            // }
+            if (igui.get_m_craftTimer() < 0.0)
+            {
+              igui.m_craftProgressPanel.gameObject.SetActive(false);
+              igui.m_craftButton.gameObject.SetActive(true);
+            }
+            else
+            {
+              igui.m_craftButton.gameObject.SetActive(false);
+              igui.m_craftProgressPanel.gameObject.SetActive(true);
+              igui.m_craftProgressBar.SetMaxValue(igui.m_craftDuration);
+              igui.m_craftProgressBar.SetValue(igui.get_m_craftTimer());
+              igui.set_m_craftTimer(igui.get_m_craftTimer() + dt);
+              if (igui.get_m_craftTimer() < (double) igui.m_craftDuration)
+                return;
+              Recycler.DoInventoryChanges(_recyclingAnalysisContexts[selectedRecipeIndex], player.GetInventory(), player);
+              igui.set_m_craftTimer(-1f);
+              igui.SetRecipe(-1, false);
+              UpdateCraftingPanel();
+              
+            }
         }
 
         private void SetupRequirementList(RecyclingAnalysisContext analysisContexts)
         {
             var igui = InventoryGui.instance;
-            var i = 0;
-            foreach (var entry in analysisContexts.Entries)
+            
+            for (int i = 0; i < igui.m_recipeRequirementList.Length; i++)
             {
-                var transform = igui.m_recipeRequirementList[i].transform;
-                if (entry.Amount == 0)
+                var elementTransform = igui.m_recipeRequirementList[i].transform;
+                if (i < analysisContexts.Entries.Count)
                 {
-                    InventoryGui.HideRequirement(transform);
+                    var entry = analysisContexts.Entries[i];
+                    if(entry.Amount == 0) 
+                        InventoryGui.HideRequirement(elementTransform);
+                    else
+                        SetupRequirement(elementTransform, entry);
                 }
                 else
                 {
-                    SetupRequirement(transform, entry);
+                    InventoryGui.HideRequirement(elementTransform);
+                    continue;
                 }
-
-                i++;
             }
+
         }
 
         public static void SetupRequirement(Transform elementRoot,

@@ -20,7 +20,6 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         [HarmonyPatch(typeof(InventoryGui), "UpdateCraftingPanel")]
         static bool UpdateCraftingPanelDetourOnRecyclingTab(InventoryGui __instance)
         {
-            Plugin.Log.LogDebug($"In recycling tab? {Plugin.RecyclingTabButtonHolder.InRecycleTab()}");
             if (Plugin.RecyclingTabButtonHolder.InRecycleTab()) return false;
             return true;
         }
@@ -28,7 +27,6 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         [HarmonyPatch(typeof(InventoryGui), "UpdateCraftingPanel")]
         static void UpdateCraftingPanelDetourOnOtherTabsEnableRecyclingButton(InventoryGui __instance)
         {
-            Plugin.Log.LogDebug($"In recycling tab? {Plugin.RecyclingTabButtonHolder.InRecycleTab()}");
             if (Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
             var player = Player.m_localPlayer;
             Plugin.RecyclingTabButtonHolder.SetInteractable(true);
@@ -47,6 +45,14 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             if (!Plugin.RecyclingTabButtonHolder.InRecycleTab()) return true;
             Plugin.RecyclingTabButtonHolder.UpdateRecipe(player, dt);
             return false;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Inventory), "Changed")]
+        static void InventorySave(Inventory __instance)
+        {
+            if (!Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
+            Plugin.RecyclingTabButtonHolder.UpdateCraftingPanel();
         }
 
         [HarmonyReversePatch]

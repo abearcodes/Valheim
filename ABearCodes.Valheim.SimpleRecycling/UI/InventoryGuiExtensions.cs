@@ -42,5 +42,15 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             AccessTools.Field(typeof(InventoryGui), "m_selectedVariant")
                 .SetValue(instance, value);
         }
+        
+        public static float get_m_craftTimer(this InventoryGui instance)
+        {
+            return (float) AccessTools.Field(typeof(InventoryGui), "m_craftTimer").GetValue(instance);
+        }
+        
+        public static void set_m_craftTimer(this InventoryGui instance, float value)
+        {
+            AccessTools.Field(typeof(InventoryGui), "m_craftTimer").SetValue(instance, value);
+        }
     }
 }

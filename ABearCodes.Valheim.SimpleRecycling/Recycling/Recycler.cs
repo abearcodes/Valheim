@@ -63,10 +63,10 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
 
             if (analysisContext.Impediments.Count > 0)
                 return;
-            DoInventoryChanges(analysisContext, inventory, player, item);
+            DoInventoryChanges(analysisContext, inventory, player);
         }
 
-        private static bool TryAnalyzeOneItem(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
+        public static bool TryAnalyzeOneItem(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
         {
             if (!TryFindRecipeForItem(analysisContext, player, analysisContext.Item)) return false;
             //todo: optimize two .GetComponent<ItemDrop> calls 
@@ -75,9 +75,9 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             return true;
         }
 
-        private static void DoInventoryChanges(RecyclingAnalysisContext analysisContext, Inventory inventory,
-            Player player, ItemDrop.ItemData item)
+        public static void DoInventoryChanges(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
         {
+            Plugin.Log.LogDebug($"Inventory changes requested");
             foreach (var entry in analysisContext.Entries)
             {
                 if (entry.Amount == 0 && entry.InitialRecipeHadZero) continue;
@@ -85,7 +85,11 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                     entry.Prefab.name, entry.Amount, entry.mQuality,
                     entry.mVariant, player.GetPlayerID(), player.GetPlayerName()
                 );
-                if (addedItem != null) continue;
+                if (addedItem != null)
+                {
+                    Plugin.Log.LogDebug($"Added {entry.Amount} of {entry.Prefab.name}");
+                    continue;
+                }
                 
                 if (entry.Amount < 1 && !Plugin.Settings.PreventZeroResourceYields.Value)
                 {
@@ -99,11 +103,15 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                     $"Inventory could not add item {Plugin.Localize(entry.Prefab.name)}");
             }
 
-            if (inventory.RemoveItem(item)) return;
+            if (inventory.RemoveItem(analysisContext.Item))
+            {
+                Plugin.Log.LogDebug($"Removed item {analysisContext.Item.m_shared.m_name}");
+                return;
+            }
             Plugin.Log.LogError(
                 "Inventory refused to remove item after valid analysis! Check the error from the inventory for details. Will mark analysis for dumping.");
             analysisContext.ShouldErrorDumpAnalysis = true;
-            analysisContext.Impediments.Add($"Inventory could not remove item {Plugin.Localize(item.m_shared.m_name)}");
+            analysisContext.Impediments.Add($"Inventory could not remove item {Plugin.Localize(analysisContext.Item.m_shared.m_name)}");
         }
 
         private static bool TryFindRecipeForItem(RecyclingAnalysisContext analysisContext, Player player,
@@ -133,18 +141,14 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             {
                 analysisContext.Impediments.Add(
                     $"Recipe for {Localization.instance.Localize(item.m_shared.m_name)} not known.");
-                Plugin.Log.LogDebug($"Recipe {analysisContext.Recipe.name} not known item ({item.m_shared.m_name})");
-                analysisContext.Recipe = null;
-                return false;
+                analysisContext.Recipe = analysisContext.Recipe;
             }
-            Debug.Log($"Recipe.. ok? {analysisContext.Recipe}");
             return true;
         }
 
         private static void AnalyzeInventoryHasEnoughEmptySlots(RecyclingAnalysisContext analysisContext,
             Inventory inventory)
         {
-            var itemData = analysisContext.Item;
             var emptySlotsAmount = inventory.GetEmptySlots();
             var needsSlots = analysisContext.Entries.Sum(entry =>
                 Math.Ceiling(entry.Amount /
@@ -152,8 +156,6 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
 
             if (emptySlotsAmount >= needsSlots) return;
             analysisContext.Impediments.Add($"Need {needsSlots} slots but only {emptySlotsAmount} were available");
-            Plugin.Log.LogDebug($"Not enough slots to recycle {itemData.m_shared.m_name} " +
-                                $"(has {emptySlotsAmount} need {needsSlots})");
         }
 
         private static void AnalyzeMaterialYieldForItem(RecyclingAnalysisContext analysisContext)
@@ -161,7 +163,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             var recyclingRate = Plugin.Settings.RecyclingRate.Value;
             var itemData = analysisContext.Item;
             var recipe = analysisContext.Recipe;
-            Plugin.Log.LogDebug($"Gathering recycling result for {itemData.m_shared.m_name}");
+            // Plugin.Log.LogDebug($"Gathering recycling result for {itemData.m_shared.m_name}");
             var amountToCraftedRecipeAmountPercentage = itemData.m_stack / (double) recipe.m_amount;
             foreach (var resource in recipe.m_resources)
             {
@@ -203,13 +205,14 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             if (realAmount < 1 && itemData.m_shared.m_maxStackSize == 1
                                && Plugin.Settings.UnstackableItemsAlwaysReturnAtLeastOneResource.Value)
                 finalAmount = 1;
+            if(Plugin.Settings.DebugAllowSpammyLogs.Value)
             Plugin.Log.LogDebug("Calculations report.\n" +
                                 $" = = = {resource.m_resItem.m_itemData.m_shared.m_name} - " +
                                 $"REA:{resource.m_amount} APLS: {amountPerLevelSum} IQ:{itemData.m_quality} " +
                                 $"STK:{itemData.m_stack}({itemData.m_shared.m_maxStackSize}) SC:{stackCompensated} " +
                                 $"ATCRAP:{amountToCraftedRecipeAmountPercentage} A:{amountPerLevelSum}, " +
                                 $"RA:{realAmount} FA:{finalAmount}");
-            return (Amount: finalAmount, InitialRecipeHadZero: true);
+            return (Amount: finalAmount, InitialRecipeHadZero: false);
         }
     }
 }

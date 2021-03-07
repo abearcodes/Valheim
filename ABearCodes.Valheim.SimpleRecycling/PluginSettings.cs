@@ -27,13 +27,14 @@ namespace ABearCodes.Valheim.SimpleRecycling
                 "If enabled, it will allow you to recycle items that you do not know the recipe for yet.\n" +
                 "Disabled by default as this can be cheaty, but sometimes required due to people losing progress.");
             
-            ContainerRecyclingEnabled = config.Bind("Recycling on containers", "ContainerRecyclingEnabled",
-                true, "If enabled, the mod will display the container recycling button");
             ContainerRecyclingButtonPositionJsonString = config.Bind("Recycling on containers",
                 "ContainerButtonPosition",
                 "{\"x\":502.42425537109377,\"y\":147.06060791015626,\"z\":-1.0}",
                 "The last saved recycling button position stored in JSON");
 
+            // UI
+            ContainerRecyclingEnabled = config.Bind("UI", "ContainerRecyclingEnabled",
+                true, "If enabled, the mod will display the container recycling button");
             NotifyOnSalvagingImpediments = config.Bind("UI", "NotifyOnSalvagingImpediments", true,
                 "If enabled and recycling a specific item runs into any issues, the mod will print a message\n" +
                 "in the center of the screen (native Valheim notification). At the time of implementation,\n" +
@@ -41,13 +42,21 @@ namespace ABearCodes.Valheim.SimpleRecycling
                 " - not enough free slots in the inventory to place the resulting resources\n" +
                 " - player does not know the recipe for the item\n" +
                 " - if enabled, cases when `PreventZeroResourceYields` kicks in and prevent the crafting");
+            EnableExperimentalCraftingTabUI = config.Bind("UI", "EnableExperimentalCraftingTabUI", false,
+                "If enabled, will display the experimental work in progress crafting tab UI");
             
+            // debug
             DebugAlwaysDumpAnalysisContext = config.Bind("zDebug", "DebugAlwaysDumpAnalysisContext", false,
                 "If enabled will dump a complete detailed recycling report every time. This is taxing in terms\n" +
                 "of performance and should only be used when debugging issues. ");
+            DebugAllowSpammyLogs = config.Bind("zDebug", "DebugAllowSpammyLogs", false,
+                "If enabled, will spam recycling checks to the console.\n" +
+                "VERY. VERY. SPAMMY. Influences performance. ");
             
             NexusID = config.Bind("zUtil", "NexusID", 205, "Nexus mod ID for updates");
         }
+
+        public ConfigEntry<bool> EnableExperimentalCraftingTabUI { get; private set; }
 
         public ConfigEntry<int> NexusID { get; set; }
 
@@ -64,5 +73,6 @@ namespace ABearCodes.Valheim.SimpleRecycling
         public ConfigEntry<string> ContainerRecyclingButtonPositionJsonString { get; }
         public ConfigEntry<bool> AllowRecyclingUnknownRecipes { get; }
         public ConfigEntry<bool> DebugAlwaysDumpAnalysisContext { get; }
+        public ConfigEntry<bool> DebugAllowSpammyLogs { get; }
     }
 }

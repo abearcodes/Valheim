@@ -1,4 +1,6 @@
-﻿using ABearCodes.Valheim.SimpleRecycling.Recycling;
+﻿using System.Collections;
+using System.Linq;
+using ABearCodes.Valheim.SimpleRecycling.Recycling;
 using ABearCodes.Valheim.SimpleRecycling.UI;
 using BepInEx;
 using BepInEx.Logging;
@@ -31,6 +33,7 @@ namespace ABearCodes.Valheim.SimpleRecycling
             _containerRecyclingButton = gameObject.AddComponent<ContainerRecyclingButtonHolder>();
             _containerRecyclingButton.OnRecycleAllTriggered += ContainerRecyclingTriggered;
             RecyclingTabButtonHolder = gameObject.AddComponent<StationRecyclingTabHolder>();
+            
         }
 
         private void OnDestroy()
