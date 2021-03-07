@@ -287,7 +287,9 @@
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="UI\ContainerRecyclingButtonHolder.cs" />
-        <Compile Include="UI\TargetRecyclingButtonHolder.cs" />
+        <Compile Include="UI\InventoryGuiExtensions.cs" />
+        <Compile Include="UI\InventoryGuiPatches.cs" />
+        <Compile Include="UI\StationRecyclingTabHolder.cs" />
         <Compile Include="UI\UIDragger.cs" />
         <Compile Include="Utils.cs" />
     </ItemGroup>

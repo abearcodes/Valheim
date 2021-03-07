@@ -5,35 +5,34 @@ using UnityEngine;
 
 namespace ABearCodes.Valheim.SimpleRecycling.Recycling
 {
-    internal struct RecyclingAnalysisContext
+    public class RecyclingAnalysisContext
     {
         public ItemDrop.ItemData Item;
-        public List<string> Impediments { get; }
-        public List<RecyclingYieldEntry> Entries { get; }
+
+        public Recipe Recipe { get; set; }
+        public List<string> Impediments { get; } = new List<string>();
+        public List<RecyclingYieldEntry> Entries { get; } = new List<RecyclingYieldEntry>();
 
         public bool ShouldErrorDumpAnalysis { get; set; }
 
-        public RecyclingAnalysisContext(ItemDrop.ItemData item) : this()
+        public RecyclingAnalysisContext(ItemDrop.ItemData item)
         {
             Item = item;
-            Impediments = new List<string>();
-            Entries = new List<RecyclingYieldEntry>();
-            ShouldErrorDumpAnalysis = false;
         }
 
-        internal struct RecyclingYieldEntry
+        public readonly struct RecyclingYieldEntry
         {
             public readonly GameObject Prefab;
-            public readonly Recipe Recipe;
+            public readonly ItemDrop.ItemData RecipeItemData;
             public readonly int Amount;
             public readonly int mQuality;
             public readonly int mVariant;
             public readonly bool InitialRecipeHadZero;
 
-            public RecyclingYieldEntry(GameObject prefab, Recipe recipe, int amount, int mQuality, int mVariant, bool initialRecipeHadZero)
+            public RecyclingYieldEntry(GameObject prefab, ItemDrop.ItemData itemData, int amount, int mQuality, int mVariant, bool initialRecipeHadZero)
             {
                 this.Prefab = prefab;
-                this.Recipe = recipe;
+                this.RecipeItemData = itemData;
                 this.Amount = amount;
                 this.mQuality = mQuality;
                 this.mVariant = mVariant;
@@ -50,29 +49,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                 ItemStacks = Item.m_stack,
                 ItemMaxStacks = Item.m_shared.m_maxStackSize,
                 Impediments = Impediments,
-                Recipe = Entries.Take(1).Select(entry =>
-                {
-                    var prefabItemData = entry.Prefab.GetComponent<ItemDrop>()?.m_itemData;
-                    if (prefabItemData == null)
-                    {
-                        Plugin.Log.LogError($"Could not get item data on prefab {entry.Prefab.name}");
-                        return null;
-                    }
-                    return new
-                    {
-                        ItemName = prefabItemData.m_shared.m_name,
-                        RecipeName = entry.Recipe.name,
-                        RecipeCraftedAmount = entry.Recipe.m_amount,
-                        Resources = entry.Recipe.m_resources.Select(resource => new
-                        {
-                            Name = resource.m_resItem.m_itemData.m_shared.m_name,
-                            Amount = resource.m_amount,
-                            AmountPerLevel = resource.m_amountPerLevel,
-                            Quality = resource.m_resItem.m_itemData.m_quality,
-                            Variant = resource.m_resItem.m_itemData.m_variant,
-                        }).ToList()
-                    };
-                }).Where(entry => entry != null).ToList(),
+                UsedRecipe = GetRecipeObject(),
                 Entries = Entries.Select(entry => new
                 {
                     PrefabName = entry.Prefab.name,
@@ -86,6 +63,24 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             sb.AppendLine(ObjectDumper.Dump(dumpObject));
             sb.AppendLine("==== Dump ends here ====");
             Plugin.Log.LogError(sb.ToString());
+        }
+
+        private dynamic GetRecipeObject()
+        {
+            return new
+            {
+                ItemName = Recipe.m_item.m_itemData.m_shared.m_name,
+                RecipeName = Recipe.name,
+                RecipeCraftedAmount = Recipe.m_amount,
+                Resources = Recipe.m_resources.Select(resource => new
+                {
+                    Name = resource.m_resItem.m_itemData.m_shared.m_name,
+                    Amount = resource.m_amount,
+                    AmountPerLevel = resource.m_amountPerLevel,
+                    Quality = resource.m_resItem.m_itemData.m_quality,
+                    Variant = resource.m_resItem.m_itemData.m_variant,
+                }).ToList()
+            };
         }
     }
 }

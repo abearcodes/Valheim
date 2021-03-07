@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace ABearCodes.Valheim.SimpleRecycling.Recycling
 {
@@ -37,20 +38,41 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, stringBuilder.ToString());
         }
 
+        public static List<RecyclingAnalysisContext> GetRecyclingAnalysisForInventory(Inventory inventory, Player player)
+        {
+            var itemListSnapshot = new List<ItemDrop.ItemData>();
+            // copy the inventory, otherwise collection will constantly change causing issues
+            itemListSnapshot.AddRange(inventory.GetAllItems());
+            var analysisList = new List<RecyclingAnalysisContext>();
+            for (var index = 0; index < itemListSnapshot.Count; index++)
+            {
+                var item = itemListSnapshot[index];
+                var analysisContext = new RecyclingAnalysisContext(item);
+                analysisList.Add(analysisContext);
+                TryAnalyzeOneItem(analysisContext, inventory, player);
+            }
+            return analysisList;
+        }
+
         private static void RecycleOneItemInInventory(RecyclingAnalysisContext analysisContext, Inventory inventory,
             Player player)
         {
             var item = analysisContext.Item;
 
-            if (!TryFindRecipeForItem(analysisContext, player, item, out var recipe)) return;
-
-            //todo: optimize two .GetComponent<ItemDrop> calls 
-            AnalyzeMaterialYieldForItem(analysisContext, recipe);
-            AnalyzeInventoryHasEnoughEmptySlots(analysisContext, inventory, item);
+            if (!TryAnalyzeOneItem(analysisContext, inventory, player)) return;
 
             if (analysisContext.Impediments.Count > 0)
                 return;
             DoInventoryChanges(analysisContext, inventory, player, item);
+        }
+
+        private static bool TryAnalyzeOneItem(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
+        {
+            if (!TryFindRecipeForItem(analysisContext, player, analysisContext.Item)) return false;
+            //todo: optimize two .GetComponent<ItemDrop> calls 
+            AnalyzeMaterialYieldForItem(analysisContext);
+            AnalyzeInventoryHasEnoughEmptySlots(analysisContext, inventory);
+            return true;
         }
 
         private static void DoInventoryChanges(RecyclingAnalysisContext analysisContext, Inventory inventory,
@@ -85,8 +107,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
         }
 
         private static bool TryFindRecipeForItem(RecyclingAnalysisContext analysisContext, Player player,
-            ItemDrop.ItemData item,
-            out Recipe recipe)
+            ItemDrop.ItemData item)
         {
             var foundRecipes = ObjectDB.instance.m_recipes
                 // some recipes are just weird, so check for null item, data and even shared (somehow it happens)
@@ -95,36 +116,35 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             if (foundRecipes.Count == 0)
             {
                 Plugin.Log.LogDebug($"Could not find a recipe for {item.m_shared.m_name}");
-                recipe = null;
+                analysisContext.Recipe = null;
                 return false;
             }
-
             if (foundRecipes.Count > 1)
             {
                 analysisContext.Impediments.Add(
                     $"Found multiple recipes ({foundRecipes.Count}) for {Localization.instance.Localize(item.m_shared.m_name)}");
-                recipe = null;
+                analysisContext.Recipe = null;
                 return false;
             }
-
-            recipe = foundRecipes.FirstOrDefault();
-            if (!player.IsRecipeKnown(recipe.m_item.m_itemData.m_shared.m_name) &&
+            
+            analysisContext.Recipe = foundRecipes.FirstOrDefault();
+            if (!player.IsRecipeKnown(analysisContext.Recipe.m_item.m_itemData.m_shared.m_name) &&
                 !Plugin.Settings.AllowRecyclingUnknownRecipes.Value)
             {
                 analysisContext.Impediments.Add(
                     $"Recipe for {Localization.instance.Localize(item.m_shared.m_name)} not known.");
-                Plugin.Log.LogDebug($"Recipe {recipe.name} not known item ({item.m_shared.m_name})");
-                recipe = null;
+                Plugin.Log.LogDebug($"Recipe {analysisContext.Recipe.name} not known item ({item.m_shared.m_name})");
+                analysisContext.Recipe = null;
                 return false;
             }
-
+            Debug.Log($"Recipe.. ok? {analysisContext.Recipe}");
             return true;
         }
 
         private static void AnalyzeInventoryHasEnoughEmptySlots(RecyclingAnalysisContext analysisContext,
-            Inventory inventory,
-            ItemDrop.ItemData itemData)
+            Inventory inventory)
         {
+            var itemData = analysisContext.Item;
             var emptySlotsAmount = inventory.GetEmptySlots();
             var needsSlots = analysisContext.Entries.Sum(entry =>
                 Math.Ceiling(entry.Amount /
@@ -136,10 +156,11 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                                 $"(has {emptySlotsAmount} need {needsSlots})");
         }
 
-        private static void AnalyzeMaterialYieldForItem(RecyclingAnalysisContext analysisContext, Recipe recipe)
+        private static void AnalyzeMaterialYieldForItem(RecyclingAnalysisContext analysisContext)
         {
             var recyclingRate = Plugin.Settings.RecyclingRate.Value;
             var itemData = analysisContext.Item;
+            var recipe = analysisContext.Recipe;
             Plugin.Log.LogDebug($"Gathering recycling result for {itemData.m_shared.m_name}");
             var amountToCraftedRecipeAmountPercentage = itemData.m_stack / (double) recipe.m_amount;
             foreach (var resource in recipe.m_resources)
@@ -159,11 +180,13 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                 var (finalAmount, initialRecipeHadZero) = CalculateFinalAmount(itemData, resource, amountToCraftedRecipeAmountPercentage,
                     recyclingRate);
                 analysisContext.Entries.Add(
-                    new RecyclingAnalysisContext.RecyclingYieldEntry(preFab, recipe, finalAmount, rItemData.m_quality,
+                    new RecyclingAnalysisContext.RecyclingYieldEntry(preFab, rItemData, finalAmount, rItemData.m_quality,
                         rItemData.m_variant, initialRecipeHadZero));
                 if (Plugin.Settings.PreventZeroResourceYields.Value && finalAmount == 0 && !initialRecipeHadZero)
+                {
                     analysisContext.Impediments.Add(
                         $"Recycling would yield 0 of {Localization.instance.Localize(resource.m_resItem.m_itemData.m_shared.m_name)}");
+                }
             }
         }
 

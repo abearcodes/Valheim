@@ -14,11 +14,26 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         public delegate void RecycleAllHandler();
 
         public event RecycleAllHandler OnRecycleAllTriggered;
-        
-        private void FixedUpdate()
+
+        private void Start()
+        {
+            InvokeRepeating(nameof(EnsureRecyclingButtonExistsIfPossible), 0f, 5f);
+        }
+
+        void EnsureRecyclingButtonExistsIfPossible()
         {
             if (InventoryGui.instance == null) return;
             if (_recycleAllButton == null) SetupButton();
+        }
+
+        private void OnDestroy()
+        {
+            Destroy(_recycleAllButton.gameObject);
+        }
+
+        private void FixedUpdate()
+        {
+            if (_recycleAllButton == null) return;
             if(!InventoryGui.instance.IsContainerOpen() && _prefired) SetButtonState(false);
         }
 
@@ -31,7 +46,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             
             var newLocalPosition = GetSavedButtonPosition();
             _recycleAllButton.transform.localPosition = newLocalPosition; 
-            
+            _recycleAllButton.onClick.RemoveAllListeners();
             _recycleAllButton.onClick.AddListener(OnRecycleAllPressed);
             _textComponent = _recycleAllButton.GetComponentInChildren<Text>();
             _imageComponent = _recycleAllButton.GetComponentInChildren<Image>();
@@ -41,6 +56,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                 Plugin.Settings.ContainerRecyclingButtonPositionJsonString.Value = JsonUtility.ToJson(position);
             };
             SetButtonState(false);
+            
         }
 
         private Vector3 GetSavedButtonPosition()

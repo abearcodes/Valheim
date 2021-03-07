@@ -2,7 +2,7 @@
 $dlls = @(
     ".\ABearCodes.Valheim.SimpleAutoGameStart\bin\Debug\ABearCodes.Valheim.SimpleAutoGameStart.dll",
     ".\ABearCodes.Valheim.CraftingWithContainers\bin\Debug\ABearCodes.Valheim.CraftingWithContainers.dll"
-    ".\ABearCodes.Valheim.SimpleRecycling\bin\Debug\ABearCodes.Valheim.SimpleRecycling.dll"
+#    ".\ABearCodes.Valheim.SimpleRecycling\bin\Debug\ABearCodes.Valheim.SimpleRecycling.dll"
 )
 
 $targets = @(

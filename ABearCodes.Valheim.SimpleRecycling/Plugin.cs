@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ABearCodes.Valheim.SimpleRecycling.Recycling;
+﻿using ABearCodes.Valheim.SimpleRecycling.Recycling;
 using ABearCodes.Valheim.SimpleRecycling.UI;
 using BepInEx;
-using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace ABearCodes.Valheim.SimpleRecycling
 {
@@ -19,9 +14,9 @@ namespace ABearCodes.Valheim.SimpleRecycling
     {
         public static PluginSettings Settings;
         public static ManualLogSource Log;
-        // for shortness and readability
-        public static string Localize(string text) => Localization.instance.Localize(text);
         private ContainerRecyclingButtonHolder _containerRecyclingButton;
+        private Harmony _harmony;
+        public static StationRecyclingTabHolder RecyclingTabButtonHolder { get; private set; }
 
         private void Awake()
         {
@@ -31,8 +26,24 @@ namespace ABearCodes.Valheim.SimpleRecycling
 
         private void Start()
         {
+            _harmony = new Harmony("ABearCodes.Valheim.SimpleRecycling");
+            _harmony.PatchAll();
             _containerRecyclingButton = gameObject.AddComponent<ContainerRecyclingButtonHolder>();
-            _containerRecyclingButton.OnRecycleAllTriggered +=  ContainerRecyclingTriggered;
+            _containerRecyclingButton.OnRecycleAllTriggered += ContainerRecyclingTriggered;
+            RecyclingTabButtonHolder = gameObject.AddComponent<StationRecyclingTabHolder>();
+        }
+
+        private void OnDestroy()
+        {
+            Debug.Log("Unpatching now");
+            _harmony.UnpatchSelf();
+        }
+
+
+        // for shortness and readability
+        public static string Localize(string text)
+        {
+            return Localization.instance.Localize(text);
         }
 
         private void ContainerRecyclingTriggered()
