@@ -45,7 +45,11 @@ namespace ABearCodes.Valheim.SimpleRecycling
             DebugAlwaysDumpAnalysisContext = config.Bind("zDebug", "DebugAlwaysDumpAnalysisContext", false,
                 "If enabled will dump a complete detailed recycling report every time. This is taxing in terms\n" +
                 "of performance and should only be used when debugging issues. ");
+            
+            NexusID = config.Bind("zUtil", "NexusID", 205, "Nexus mod ID for updates");
         }
+
+        public ConfigEntry<int> NexusID { get; set; }
 
         public ConfigEntry<bool> NotifyOnSalvagingImpediments { get; }
 
