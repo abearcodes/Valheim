@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-**What mod are you proposing a feature for?**
+**Which mod are you proposing a feature for?**
 Crafting With Containers / Simple Recycling
 
 **Is your feature request related to a problem? Please describe.**
