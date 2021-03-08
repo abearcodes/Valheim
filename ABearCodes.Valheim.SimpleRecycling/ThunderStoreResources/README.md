@@ -5,7 +5,7 @@
 
 Adds a tab to the crafting station that recycles (uncrafts) items from player's inventory. 
 
-Previously this mod operated via a button placed on containers. Both are still in and can be enabled via settings. 
+Previously this mod operated via a button placed on containers. Both are still in and can be enabled via settings. Container approach is kept for compatibility and will be removed in future versions. 
 
 ![demo](https://i.imgur.com/91ILtUh.png)
 
@@ -102,9 +102,14 @@ DebugAlwaysDumpAnalysisContext = false
 
 ## Changelog
 
+### 0.0.9
+
+- fixed null reference exceptions when plugin starts up (missed due to plugin being loaded before as a script)
+
 ### 0.0.8
 
-- added new experimental UI that adds a new tab to the crafting station. Enabled by default.
+- added new experimental UI that addds a new tab to the crafting station. Enabled by default.
+- container recycle button no longer enabled by default
 
 ### 0.0.7
 
