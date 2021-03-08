@@ -177,7 +177,11 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         }
 
 
-        public bool InRecycleTab() => !_recyclingTabButtonComponent.interactable;
+        public bool InRecycleTab()
+        {
+            if (_recyclingTabButtonComponent == null) return false;
+            return !_recyclingTabButtonComponent.interactable;
+        }
 
         public void SetInteractable(bool interactable)
         {

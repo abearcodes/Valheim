@@ -28,7 +28,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         [HarmonyPatch(typeof(InventoryGui), "Hide")]
         static void OnHideSetToCraftingTab(InventoryGui __instance)
         {
-            if (!Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
+            if (Plugin.RecyclingTabButtonHolder == null || !Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
             InventoryGui.instance.OnTabCraftPressed();
         }
         
@@ -60,7 +60,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         [HarmonyPatch(typeof(Inventory), "Changed")]
         static void InventorySave(Inventory __instance)
         {
-            if (!Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
+            if (Plugin.RecyclingTabButtonHolder == null || !Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
             Plugin.RecyclingTabButtonHolder.UpdateCraftingPanel();
         }
 
