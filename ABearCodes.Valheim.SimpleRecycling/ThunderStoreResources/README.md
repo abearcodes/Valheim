@@ -1,9 +1,13 @@
 ﻿
 # Simple Recycler
 
-![demo](https://i.imgur.com/91ILtUh.png)
+![new ui](https://i.imgur.com/9ZyxBN8.png)
 
-Adds a button that recycles (uncrafts) items in any container. 
+Adds a tab to the crafting station that recycles (uncrafts) items from player's inventory. 
+
+Previously this mod operated via a button placed on containers. Both are still in and can be enabled via settings. 
+
+![demo](https://i.imgur.com/91ILtUh.png)
 
 ### Key points
 
@@ -100,8 +104,7 @@ DebugAlwaysDumpAnalysisContext = false
 
 ### 0.0.8
 
-- added new experimental UI that adds a new tab to the crafting station. Enabled via settings by setting `EnableExperimentalCraftingTabUI` to true
-    ![new ui](https://i.imgur.com/9ZyxBN8.png)
+- added new experimental UI that adds a new tab to the crafting station. Enabled by default.
 
 ### 0.0.7
 

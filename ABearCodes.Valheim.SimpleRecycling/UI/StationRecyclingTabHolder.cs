@@ -13,9 +13,6 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
     {
         private GameObject _recyclingTabButtonGameObject;
         private Button _recyclingTabButtonComponent;
-        private bool _prefired = false;
-        private Text _textComponent;
-        private Image _imageComponent;
         private List<RecyclingAnalysisContext> _recyclingAnalysisContexts = new List<RecyclingAnalysisContext>();
 
         private void Start()

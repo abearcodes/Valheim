@@ -1,4 +1,5 @@
 ﻿using System;
+using ABearCodes.Valheim.SimpleRecycling.Recycling;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,6 +24,14 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             if (Plugin.RecyclingTabButtonHolder.InRecycleTab()) return false;
             return true;
         }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(InventoryGui), "Hide")]
+        static void OnHideSetToCraftingTab(InventoryGui __instance)
+        {
+            if (!Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
+            InventoryGui.instance.OnTabCraftPressed();
+        }
+        
         [HarmonyPostfix]
         [HarmonyPatch(typeof(InventoryGui), "UpdateCraftingPanel")]
         static void UpdateCraftingPanelDetourOnOtherTabsEnableRecyclingButton(InventoryGui __instance)

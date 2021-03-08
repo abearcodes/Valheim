@@ -1,6 +1,6 @@
 {
     "name":  "SimpleRecycling",
-    "description":  "Adds a button that recycles (uncrafts) items in any container",
+    "description":  "Adds a tab to the crafting station that recycles (uncrafts) items from player's inventory",
     "version_number":  "0.0.8",
     "website_url":  "https://github.com/abearcodes/Valheim",
     "dependencies":  [
