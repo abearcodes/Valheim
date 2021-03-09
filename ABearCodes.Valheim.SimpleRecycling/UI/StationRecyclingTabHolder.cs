@@ -24,10 +24,6 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         {
             if (InventoryGui.instance == null) return;
             if (_recyclingTabButtonComponent == null) SetupTabButton();
-            if (_recyclingTabButtonGameObject.activeSelf != Plugin.Settings.EnableExperimentalCraftingTabUI.Value)
-            {
-                _recyclingTabButtonGameObject.SetActive(Plugin.Settings.EnableExperimentalCraftingTabUI.Value);
-            }
         }
 
         private void OnDestroy()
@@ -58,6 +54,8 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             _recyclingTabButtonComponent.interactable = true;
             _recyclingTabButtonComponent.onClick.RemoveAllListeners();
             _recyclingTabButtonComponent.onClick.AddListener(OnRecycleClick);
+            if(Player.m_localPlayer?.GetCurrentCraftingStation() == null)
+                _recyclingTabButtonGameObject.SetActive(false);
 
             // _recyclingTabButton.transform.parent = InventoryGui.instance.m_tabUpgrade.transform.parent;
 
@@ -123,7 +121,8 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
 
             _recyclingAnalysisContexts.Clear();
             var validRecycles = Recycler.GetRecyclingAnalysisForInventory(localPlayer.GetInventory(), localPlayer)
-                .Where(context => context.Recipe != null);
+                .Where(context => context.Recipe != null && 
+                                  (!Plugin.Settings.HideEquippedItemsInRecyclingTab.Value || !context.Item.m_equiped));
             _recyclingAnalysisContexts.AddRange(validRecycles);
             foreach (var context in _recyclingAnalysisContexts)
             {
@@ -246,7 +245,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                 if (analysisContext.Impediments.Count == 0)
                     igui.m_recipeDecription.text = "\nAll requirements are <color=orange>fulfilled</color>";
                 else
-                    igui.m_recipeDecription.text = $"\nRecycling blocked by these reasons:\n\n<size=10>" +
+                    igui.m_recipeDecription.text = $"\nRecycling blocked for these reasons:\n\n<size=10>" +
                                                    $"{string.Join("\n", analysisContext.Impediments)}" +
                                                    $"</size>";
                 if (itemData != null)

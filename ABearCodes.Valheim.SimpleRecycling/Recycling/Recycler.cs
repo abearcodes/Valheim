@@ -70,9 +70,19 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
         {
             if (!TryFindRecipeForItem(analysisContext, player, analysisContext.Item)) return false;
             //todo: optimize two .GetComponent<ItemDrop> calls 
+            AnalyzeItemBlockReasons(analysisContext, inventory, player);
             AnalyzeMaterialYieldForItem(analysisContext);
             AnalyzeInventoryHasEnoughEmptySlots(analysisContext, inventory);
             return true;
+        }
+
+        private static void AnalyzeItemBlockReasons(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
+        {
+            // for now only houses the equipped check
+            if (analysisContext.Item.m_equiped)
+            {
+                analysisContext.Impediments.Add("Item is currently equipped");
+            }
         }
 
         public static void DoInventoryChanges(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)

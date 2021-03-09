@@ -102,6 +102,13 @@ DebugAlwaysDumpAnalysisContext = false
 
 ## Changelog
 
+### 0.0.10
+
+- setting to disable container recycling button now actually works
+- fix a bug where the recycle button would appear in situations when it shouldn't
+- main recycler logic now evaluates if an item is equipped and if it is, adds that as a blocking issue for recycling. 
+- added setting to hide recipes for equipped items, enabled by default
+
 ### 0.0.9
 
 - fixed null reference exceptions when plugin starts up (missed due to plugin being loaded before as a script)

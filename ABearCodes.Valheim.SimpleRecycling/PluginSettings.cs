@@ -48,6 +48,11 @@ namespace ABearCodes.Valheim.SimpleRecycling
                 "If enabled, will display the experimental work in progress crafting tab UI\n" +
                 "Enabled by default.");
             
+            HideEquippedItemsInRecyclingTab = config.Bind("UI", "HideRecipesForEquippedItems", true,
+                "If enabled, it will hide equipped items in the crafting tab.\n" +
+                "This does not make the item recyclable and only influences whether or not it's shown.\n" +
+                "Enabled by default.");
+            
             // debug
             DebugAlwaysDumpAnalysisContext = config.Bind("zDebug", "DebugAlwaysDumpAnalysisContext", false,
                 "If enabled will dump a complete detailed recycling report every time. This is taxing in terms\n" +
@@ -77,5 +82,6 @@ namespace ABearCodes.Valheim.SimpleRecycling
         public ConfigEntry<bool> AllowRecyclingUnknownRecipes { get; }
         public ConfigEntry<bool> DebugAlwaysDumpAnalysisContext { get; }
         public ConfigEntry<bool> DebugAllowSpammyLogs { get; }
+        public ConfigEntry<bool> HideEquippedItemsInRecyclingTab { get; }
     }
 }
