@@ -30,6 +30,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         {
             if (Plugin.RecyclingTabButtonHolder == null || !Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
             InventoryGui.instance.OnTabCraftPressed();
+            Plugin.RecyclingTabButtonHolder.SetActive(false);
         }
         
         [HarmonyPostfix]

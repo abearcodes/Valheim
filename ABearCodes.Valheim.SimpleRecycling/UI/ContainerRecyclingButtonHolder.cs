@@ -23,12 +23,11 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         void EnsureRecyclingButtonExistsIfPossible()
         {
             if (InventoryGui.instance == null) return;
-            if (_recycleAllButton != null)
+            if (_recycleAllButton == null)
             {
-                _recycleAllButton.gameObject.SetActive(Plugin.Settings.ContainerRecyclingEnabled.Value);
-                return;
+                SetupButton();
             }
-            else SetupButton();
+            _recycleAllButton.gameObject.SetActive(Plugin.Settings.ContainerRecyclingEnabled.Value);
         }
 
         private void OnDestroy()
