@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Linq;
-using ABearCodes.Valheim.SimpleRecycling.Recycling;
+﻿using ABearCodes.Valheim.SimpleRecycling.Recycling;
 using ABearCodes.Valheim.SimpleRecycling.UI;
 using BepInEx;
 using BepInEx.Logging;
@@ -11,7 +9,7 @@ namespace ABearCodes.Valheim.SimpleRecycling
 {
     [BepInPlugin("com.github.abearcodes.valheim.simplerecycling",
         "SimpleRecycling",
-        "0.0.9")]
+        "0.0.10")]
     public class Plugin : BaseUnityPlugin
     {
         public static PluginSettings Settings;
