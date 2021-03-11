@@ -71,6 +71,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             AnalyzeItemBlockReasons(analysisContext, inventory, player);
             AnalyzeMaterialYieldForItem(analysisContext);
             AnalyzeInventoryHasEnoughEmptySlots(analysisContext, inventory);
+            AnalyzeItemDisplayImpediments(analysisContext, inventory, player);
             return true;
         }
                 
