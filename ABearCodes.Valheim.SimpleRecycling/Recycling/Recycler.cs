@@ -66,9 +66,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
         public static bool TryAnalyzeOneItem(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
         {
             if (!TryFindRecipeForItem(analysisContext, player)) return false;
-            AnalyzeItemDisplayImpediments(analysisContext, inventory, player);
             //todo: optimize two .GetComponent<ItemDrop> calls 
-            AnalyzeItemBlockReasons(analysisContext, inventory, player);
             AnalyzeMaterialYieldForItem(analysisContext);
             AnalyzeInventoryHasEnoughEmptySlots(analysisContext, inventory);
             AnalyzeItemDisplayImpediments(analysisContext, inventory, player);

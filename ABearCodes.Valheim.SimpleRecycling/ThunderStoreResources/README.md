@@ -102,6 +102,12 @@ DebugAlwaysDumpAnalysisContext = false
 
 ## Changelog
 
+### 0.0.11
+
+- added option to ignore items on the hotbar (enabled by default)
+- added filter based on the crafting station used by recipe. Initially implemented for food, but can be configured to whatever one's needs are.
+- fixed some minor compatibility issues with EpicLoot, moved button more to the right for now, needs proper fix. 
+
 ### 0.0.10
 
 - setting to disable container recycling button now actually works

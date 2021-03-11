@@ -16,7 +16,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
 
         private void Start()
         {
-            InvokeRepeating(nameof(EnsureRecyclingTabExists), 0f, 5f);
+            InvokeRepeating(nameof(EnsureRecyclingTabExists), 5f, 5f);
         }
 
         void EnsureRecyclingTabExists()
@@ -27,7 +27,6 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
 
         private void OnDestroy()
         {
-            Debug.Log("Destroying... 1");
             Destroy(_recyclingTabButtonGameObject.gameObject);
         }
 
@@ -37,26 +36,22 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             var upgradeTabTransform = InventoryGui.instance.m_tabUpgrade.transform;
             _recyclingTabButtonGameObject = Instantiate(InventoryGui.instance.m_tabUpgrade.gameObject,
                 upgradeTabTransform.position, upgradeTabTransform.rotation, upgradeTabTransform.parent);
-
             _recyclingTabButtonGameObject.name = "RECYCLE";
             // Unity3d is inconsistent and for whatever reason game object order in the parent transform
             // matters for the UI components 😐
             _recyclingTabButtonGameObject.transform.parent.Find("TabBorder").SetAsLastSibling();
-            _recyclingTabButtonGameObject.transform.localPosition = new Vector3(-70, -94, 0);
-
+            _recyclingTabButtonGameObject.transform.localPosition = new Vector3(-45, -94, 0);
             var textComponent = _recyclingTabButtonGameObject.GetComponentInChildren<Text>();
             textComponent.text = "RECYCLE";
             var imageComponent = _recyclingTabButtonGameObject.GetComponent<Image>();
             // imageComponent.color = new Color(0.7f, 1f, 0.7f);
-
+            
             _recyclingTabButtonComponent = _recyclingTabButtonGameObject.GetComponent<Button>();
             _recyclingTabButtonComponent.interactable = true;
             _recyclingTabButtonComponent.onClick.RemoveAllListeners();
             _recyclingTabButtonComponent.onClick.AddListener(OnRecycleClick);
             if(Player.m_localPlayer?.GetCurrentCraftingStation() == null)
                 _recyclingTabButtonGameObject.SetActive(false);
-
-            _recyclingTabButtonGameObject.SetActive(Player.m_localPlayer.GetCurrentCraftingStation() != null);
         }
 
         private void OnRecycleClick()

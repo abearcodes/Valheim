@@ -12,9 +12,14 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         [HarmonyPrefix]
         [HarmonyPatch(typeof(InventoryGui), "OnTabCraftPressed")]
         [HarmonyPatch(typeof(InventoryGui), "OnTabUpgradePressed")]
-        static void OnTabCraftPressedAlsoEnableRecycling(InventoryGui __instance)
+        [HarmonyPriority(600)]
+        // ideally we want the one below, but epic loot doesn't have a stable id
+        // [HarmonyBefore("EpicLoot")]
+        static void OnTabCraftPressedAlsoEnableRecycling1(InventoryGui __instance)
         {
             Plugin.RecyclingTabButtonHolder.SetInteractable(true);
+            // temporary fix for compatibility with EpicLoot
+            InventoryGui.instance.UpdateCraftingPanel(false);
         }
 
         [HarmonyPrefix]
@@ -104,8 +109,12 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             throw new NotImplementedException("stub");
         }
         
-
-
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(InventoryGui), "UpdateCraftingPanel", typeof(bool))]
+        public static void UpdateCraftingPanel(this InventoryGui __instance, bool focusView)
+        {
+            throw new NotImplementedException("stub");
+        }
 
     }
 }
