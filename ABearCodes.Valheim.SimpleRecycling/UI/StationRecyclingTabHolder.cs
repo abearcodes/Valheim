@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ABearCodes.Valheim.SimpleRecycling.Recycling;
-using HarmonyLib;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
+
 
 namespace ABearCodes.Valheim.SimpleRecycling.UI
 {
@@ -57,17 +56,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             if(Player.m_localPlayer?.GetCurrentCraftingStation() == null)
                 _recyclingTabButtonGameObject.SetActive(false);
 
-            // _recyclingTabButton.transform.parent = InventoryGui.instance.m_tabUpgrade.transform.parent;
-
-            // _recyclingTabButton.onClick.AddListener(OnRecycleAllPressed);
-            // _textComponent = _recyclingTabButton.GetComponentInChildren<Text>();
-            // _imageComponent = _recyclingTabButton.GetComponentInChildren<Image>();
-            // var dragger = _recyclingTabButton.gameObject.AddComponent<UIDragger>();
-            // dragger.OnUIDropped += (source, position) =>
-            // {
-            //     Plugin.Settings.ContainerRecyclingButtonPositionJsonString.Value = JsonUtility.ToJson(position);
-            // };
-            // SetButtonState(false);
+            _recyclingTabButtonGameObject.SetActive(Player.m_localPlayer.GetCurrentCraftingStation() != null);
         }
 
         private void OnRecycleClick()
@@ -109,7 +98,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                 igui.SetRecipe(-1, true);
         }
 
-        private void UpdateRecyclingList()
+        public void UpdateRecyclingList()
         {
             var localPlayer = Player.m_localPlayer;
             var igui = InventoryGui.instance;
@@ -121,8 +110,12 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
 
             _recyclingAnalysisContexts.Clear();
             var validRecycles = Recycler.GetRecyclingAnalysisForInventory(localPlayer.GetInventory(), localPlayer)
-                .Where(context => context.Recipe != null && 
-                                  (!Plugin.Settings.HideEquippedItemsInRecyclingTab.Value || !context.Item.m_equiped));
+                .Where(context => context.Recipe != null
+                                  // we want to reply on display impediments mainly,
+                                  // but null recipes are really a deal breaker and
+                                  // require to many checks and workarounds
+                                  // so it makes more sense to just filter them out completely 
+                                  && context.DisplayImpediments.Count == 0);
             _recyclingAnalysisContexts.AddRange(validRecycles);
             foreach (var context in _recyclingAnalysisContexts)
             {
@@ -147,13 +140,13 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             ((RectTransform) element.transform).anchoredPosition = new Vector2(0.0f, count * -igui.m_recipeListSpace);
             var component1 = element.transform.Find("icon").GetComponent<Image>();
             component1.sprite = context.Item.GetIcon();
-            component1.color = context.Impediments.Count == 0 ? Color.white : new Color(1f, 0.0f, 1f, 0.0f);
+            component1.color = context.RecyclingImpediments.Count == 0 ? Color.white : new Color(1f, 0.0f, 1f, 0.0f);
             var component2 = element.transform.Find("name").GetComponent<Text>();
             var str = Localization.instance.Localize(context.Item.m_shared.m_name);
             if (context.Item.m_stack > 1 && context.Item.m_shared.m_maxStackSize > 1)
                 str = str + " x" + context.Item.m_stack;
             component2.text = str;
-            component2.color = context.Impediments.Count == 0 ? Color.white : new Color(0.66f, 0.66f, 0.66f, 1f);
+            component2.color = context.RecyclingImpediments.Count == 0 ? Color.white : new Color(0.66f, 0.66f, 0.66f, 1f);
             var component3 = element.transform.Find("Durability").GetComponent<GuiBar>();
             if (context.Item.m_shared.m_useDurability &&
                 context.Item.m_durability < (double) context.Item.GetMaxDurability())
@@ -242,11 +235,11 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                 igui.m_recipeName.text = str;
                 igui.m_recipeDecription.text = Localization.instance.Localize(
                 ItemDrop.ItemData.GetTooltip(igui.get_m_selectedRecipe().Key.m_item.m_itemData, num, true));
-                if (analysisContext.Impediments.Count == 0)
+                if (analysisContext.RecyclingImpediments.Count == 0)
                     igui.m_recipeDecription.text = "\nAll requirements are <color=orange>fulfilled</color>";
                 else
                     igui.m_recipeDecription.text = $"\nRecycling blocked for these reasons:\n\n<size=10>" +
-                                                   $"{string.Join("\n", analysisContext.Impediments)}" +
+                                                   $"{string.Join("\n", analysisContext.RecyclingImpediments)}" +
                                                    $"</size>";
                 if (itemData != null)
                 {
@@ -264,9 +257,9 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                 SetupRequirementList(analysisContext);
                 
                 igui.m_minStationLevelIcon.gameObject.SetActive(false);
-                igui.m_craftButton.interactable = analysisContext.Impediments.Count == 0;
+                igui.m_craftButton.interactable = analysisContext.RecyclingImpediments.Count == 0;
                 igui.m_craftButton.GetComponentInChildren<Text>().text = "Recycle";
-                if(analysisContext.Impediments.Count == 0)
+                if(analysisContext.RecyclingImpediments.Count == 0)
                     igui.m_craftButton.GetComponent<UITooltip>().m_text = "";
                 else
                     igui.m_craftButton.GetComponent<UITooltip>().m_text = Localization.instance.Localize("$msg_missingrequirement");
@@ -305,7 +298,6 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
               igui.set_m_craftTimer(-1f);
               igui.SetRecipe(-1, false);
               UpdateCraftingPanel();
-              
             }
         }
 

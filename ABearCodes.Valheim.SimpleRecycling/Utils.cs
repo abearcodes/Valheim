@@ -36,10 +36,7 @@ namespace ABearCodes.Valheim.SimpleRecycling
 
         private string GetTypeName(Type type)
         {
-            if (IsAnonymousType(type))
-            {
-                return "AnonymousType";
-            }
+            if (IsAnonymousType(type)) return "AnonymousType";
 
             return type.Name;
         }
@@ -164,6 +161,7 @@ namespace ABearCodes.Valheim.SimpleRecycling
 
             return "{ }";
         }
+
         private static bool IsAnonymousType(Type type)
         {
             if (type == null)

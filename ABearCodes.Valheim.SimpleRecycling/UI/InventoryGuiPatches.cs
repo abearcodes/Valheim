@@ -59,10 +59,21 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Inventory), "Changed")]
-        static void InventorySave(Inventory __instance)
+        static void InventorySave()
         {
             if (Plugin.RecyclingTabButtonHolder == null || !Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
-            Plugin.RecyclingTabButtonHolder.UpdateCraftingPanel();
+            Plugin.RecyclingTabButtonHolder.UpdateRecyclingList();
+            InventoryGui.instance.SetRecipe(0, false);
+        }
+        
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Humanoid), "EquipItem", typeof(ItemDrop.ItemData), typeof(bool))]
+        [HarmonyPatch(typeof(Humanoid), "UnequipItem", typeof(ItemDrop.ItemData), typeof(bool))]
+        static void HumanoidEquip(Humanoid __instance)
+        {
+            if (Plugin.RecyclingTabButtonHolder == null || __instance != Player.m_localPlayer || !Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
+            Plugin.RecyclingTabButtonHolder.UpdateRecyclingList();
+            InventoryGui.instance.SetRecipe(0, false);
         }
 
         [HarmonyReversePatch]

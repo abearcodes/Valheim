@@ -47,10 +47,14 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         {
             return (float) AccessTools.Field(typeof(InventoryGui), "m_craftTimer").GetValue(instance);
         }
-        
         public static void set_m_craftTimer(this InventoryGui instance, float value)
         {
             AccessTools.Field(typeof(InventoryGui), "m_craftTimer").SetValue(instance, value);
         }
+        public static Color get_m_minStationLevelBasecolor(this InventoryGui instance)
+        {
+            return (Color) AccessTools.Field(typeof(InventoryGui), "m_minStationLevelBasecolor").GetValue(instance);
+        }
+        
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEngine;
 
 namespace ABearCodes.Valheim.SimpleRecycling.Recycling
 {
@@ -27,11 +26,11 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             }
 
             var stringBuilder = new StringBuilder();
-            foreach (var analysisContext in analysisList.Where(analysis => analysis.Impediments.Count > 0))
+            foreach (var analysisContext in analysisList.Where(analysis => analysis.RecyclingImpediments.Count > 0))
             {
                 stringBuilder.AppendLine($"Could not recycle {Plugin.Localize(analysisContext.Item.m_shared.m_name)} " +
-                                         $"for {analysisContext.Impediments.Count} reasons:");
-                foreach (var impediment in analysisContext.Impediments) stringBuilder.AppendLine(impediment);
+                                         $"for {analysisContext.RecyclingImpediments.Count} reasons:");
+                foreach (var impediment in analysisContext.RecyclingImpediments) stringBuilder.AppendLine(impediment);
             }
 
             if (stringBuilder.ToString().Length == 0 || !Plugin.Settings.NotifyOnSalvagingImpediments.Value) return;
@@ -57,32 +56,39 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
         private static void RecycleOneItemInInventory(RecyclingAnalysisContext analysisContext, Inventory inventory,
             Player player)
         {
-            var item = analysisContext.Item;
-
             if (!TryAnalyzeOneItem(analysisContext, inventory, player)) return;
 
-            if (analysisContext.Impediments.Count > 0)
+            if (analysisContext.RecyclingImpediments.Count > 0)
                 return;
             DoInventoryChanges(analysisContext, inventory, player);
         }
 
         public static bool TryAnalyzeOneItem(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
         {
-            if (!TryFindRecipeForItem(analysisContext, player, analysisContext.Item)) return false;
+            if (!TryFindRecipeForItem(analysisContext, player)) return false;
+            AnalyzeItemDisplayImpediments(analysisContext, inventory, player);
             //todo: optimize two .GetComponent<ItemDrop> calls 
             AnalyzeItemBlockReasons(analysisContext, inventory, player);
             AnalyzeMaterialYieldForItem(analysisContext);
             AnalyzeInventoryHasEnoughEmptySlots(analysisContext, inventory);
             return true;
         }
-
-        private static void AnalyzeItemBlockReasons(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
+                
+        private static void AnalyzeItemDisplayImpediments(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
         {
-            // for now only houses the equipped check
-            if (analysisContext.Item.m_equiped)
-            {
-                analysisContext.Impediments.Add("Item is currently equipped");
-            }
+            if (player.GetInventory() != inventory) return;
+
+            if (analysisContext.Item.m_equiped && Plugin.Settings.HideEquippedItemsInRecyclingTab.Value) 
+                analysisContext.DisplayImpediments.Add("Item is currently equipped");
+
+            if(analysisContext.Item.m_gridPos.y == 0 && Plugin.Settings.IgnoreItemsOnHotbar.Value)
+                analysisContext.DisplayImpediments.Add("Item is on hotbar and setting to ignore hotbar is set");
+
+            if (analysisContext.Recipe.m_craftingStation?.m_name != null
+                && Plugin.Settings.StationFilterEnabled.Value
+                && Plugin.Settings.StationFilterList.Contains(analysisContext.Recipe.m_craftingStation.m_name))
+                analysisContext.DisplayImpediments.Add(
+                    $"Item is from filtered station ({Plugin.Localize(analysisContext.Recipe.m_craftingStation.m_name)})");
         }
 
         public static void DoInventoryChanges(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
@@ -109,7 +115,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                 Plugin.Log.LogError(
                     "Inventory refused to add item after valid analysis! Check the error from the inventory for details. Will mark analysis for dumping.");
                 analysisContext.ShouldErrorDumpAnalysis = true;
-                analysisContext.Impediments.Add(
+                analysisContext.RecyclingImpediments.Add(
                     $"Inventory could not add item {Plugin.Localize(entry.Prefab.name)}");
             }
 
@@ -121,12 +127,12 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             Plugin.Log.LogError(
                 "Inventory refused to remove item after valid analysis! Check the error from the inventory for details. Will mark analysis for dumping.");
             analysisContext.ShouldErrorDumpAnalysis = true;
-            analysisContext.Impediments.Add($"Inventory could not remove item {Plugin.Localize(analysisContext.Item.m_shared.m_name)}");
+            analysisContext.RecyclingImpediments.Add($"Inventory could not remove item {Plugin.Localize(analysisContext.Item.m_shared.m_name)}");
         }
 
-        private static bool TryFindRecipeForItem(RecyclingAnalysisContext analysisContext, Player player,
-            ItemDrop.ItemData item)
+        private static bool TryFindRecipeForItem(RecyclingAnalysisContext analysisContext, Player player)
         {
+            var item = analysisContext.Item;
             var foundRecipes = ObjectDB.instance.m_recipes
                 // some recipes are just weird, so check for null item, data and even shared (somehow it happens)
                 .Where(rec => rec?.m_item?.m_itemData?.m_shared?.m_name == item.m_shared.m_name)
@@ -134,13 +140,15 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             if (foundRecipes.Count == 0)
             {
                 Plugin.Log.LogDebug($"Could not find a recipe for {item.m_shared.m_name}");
+                analysisContext.DisplayImpediments.Add($"Could not find a recipe for {item.m_shared.m_name}");
                 analysisContext.Recipe = null;
                 return false;
             }
             if (foundRecipes.Count > 1)
             {
-                analysisContext.Impediments.Add(
+                analysisContext.RecyclingImpediments.Add(
                     $"Found multiple recipes ({foundRecipes.Count}) for {Localization.instance.Localize(item.m_shared.m_name)}");
+                analysisContext.DisplayImpediments.Add($"Found multiple recipes ({foundRecipes.Count}) for {Localization.instance.Localize(item.m_shared.m_name)}");
                 analysisContext.Recipe = null;
                 return false;
             }
@@ -149,9 +157,8 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             if (!player.IsRecipeKnown(analysisContext.Recipe.m_item.m_itemData.m_shared.m_name) &&
                 !Plugin.Settings.AllowRecyclingUnknownRecipes.Value)
             {
-                analysisContext.Impediments.Add(
+                analysisContext.RecyclingImpediments.Add(
                     $"Recipe for {Localization.instance.Localize(item.m_shared.m_name)} not known.");
-                analysisContext.Recipe = analysisContext.Recipe;
             }
             return true;
         }
@@ -165,7 +172,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                              (double) entry.Prefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_maxStackSize));
 
             if (emptySlotsAmount >= needsSlots) return;
-            analysisContext.Impediments.Add($"Need {needsSlots} slots but only {emptySlotsAmount} were available");
+            analysisContext.RecyclingImpediments.Add($"Need {needsSlots} slots but only {emptySlotsAmount} were available");
         }
 
         private static void AnalyzeMaterialYieldForItem(RecyclingAnalysisContext analysisContext)
@@ -184,7 +191,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                 {
                     Plugin.Log.LogWarning(
                         $"Could not find a prefab for {itemData.m_shared.m_name}! Won't be able to spawn items. You might want to report this!");
-                    analysisContext.Impediments.Add(
+                    analysisContext.RecyclingImpediments.Add(
                         $"Could not find item {Localization.instance.Localize(itemData.m_shared.m_name)}({itemData.m_shared.m_name})");
                     continue;
                 }
@@ -196,7 +203,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                         rItemData.m_variant, initialRecipeHadZero));
                 if (Plugin.Settings.PreventZeroResourceYields.Value && finalAmount == 0 && !initialRecipeHadZero)
                 {
-                    analysisContext.Impediments.Add(
+                    analysisContext.RecyclingImpediments.Add(
                         $"Recycling would yield 0 of {Localization.instance.Localize(resource.m_resItem.m_itemData.m_shared.m_name)}");
                 }
             }

@@ -31,7 +31,6 @@ namespace ABearCodes.Valheim.SimpleRecycling
             _containerRecyclingButton = gameObject.AddComponent<ContainerRecyclingButtonHolder>();
             _containerRecyclingButton.OnRecycleAllTriggered += ContainerRecyclingTriggered;
             RecyclingTabButtonHolder = gameObject.AddComponent<StationRecyclingTabHolder>();
-            
         }
 
         private void OnDestroy()

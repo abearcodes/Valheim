@@ -10,7 +10,9 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
         public ItemDrop.ItemData Item;
 
         public Recipe Recipe { get; set; }
-        public List<string> Impediments { get; } = new List<string>();
+        public List<string> RecyclingImpediments { get; } = new List<string>();
+        
+        public List<string> DisplayImpediments { get; } = new List<string>();
         public List<RecyclingYieldEntry> Entries { get; } = new List<RecyclingYieldEntry>();
 
         public bool ShouldErrorDumpAnalysis { get; set; }
@@ -48,7 +50,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
                 ItemQuality = Item.m_quality,
                 ItemStacks = Item.m_stack,
                 ItemMaxStacks = Item.m_shared.m_maxStackSize,
-                Impediments = Impediments,
+                Impediments = RecyclingImpediments,
                 UsedRecipe = GetRecipeObject(),
                 Entries = Entries.Select(entry => new
                 {
