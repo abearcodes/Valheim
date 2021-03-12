@@ -12,8 +12,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Utils
             go.SetActive(false);
             GameObject.Destroy(go, lifetime);
             
-            // go.transform.position = spawn + Random.insideUnitSphere * 0.25f;
             go.transform.position = spawn + Vector3.up * 0.35f;
+            var targetPosition = target.position + Vector3.up; 
             
             var lineRenderer = go.AddComponent<LineRenderer>();
             lineRenderer.enabled = false;
@@ -23,8 +23,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Utils
             lineRenderer.SetPositions(new []
             {
                 go.transform.position,
-                (go.transform.position + target.position) / 2, 
-                target.position
+                (go.transform.position + targetPosition) / 2, 
+                targetPosition
             });
             lineRenderer.startWidth = startWidth;
             lineRenderer.endWidth = endWidth;
