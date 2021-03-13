@@ -5,18 +5,17 @@
 
 Adds a tab to the crafting station that recycles (uncrafts) items from player's inventory. 
 
-Previously this mod operated via a button placed on containers. Both are still in and can be enabled via settings. Container approach is kept for compatibility and will be removed in future versions. 
-
-![demo](https://i.imgur.com/91ILtUh.png)
-
 ### Key points
 
-- Returns 50% of the resources by default. Configurable via settings. 
-- You need to know the recipe for the item to "uncraft" it
-- You can move the recycling button by pressing the left Ctrl and right click dragging the button
-- Has a fail safe to prevent accidental presses
-  
-    ![](https://i.imgur.com/iAbLzvN.png)
+- the aim of the mod is to feel as much native to Valheim as possible. In many cases this will mean that the default settings in the mod are less softcore, but configurable to accomodate for all types of experiences
+- accounts for resources invested into upgraded items
+- returns 50% of the resources by default (configurable)
+- only shows items that have a recipe for crafting them, i.e. won't show wood.  
+- you need to know the recipe for the item to "uncraft" it (will be configurable)
+- requires the right crafting station type and level to recycle an item (configurable)
+    - for example, a Silver Sword upgraded to Level 4 will require a Forge of Level 4 to recycle
+- if the mod is unable to recycle something, it reports as to why in the "description" text of the selected item
+
 
 ## Manual installation
 
@@ -31,12 +30,11 @@ https://github.com/abearcodes/Valheim/issues/new
 ## Development plans
 
 - introduce a separate buildable "station" to do the uncrafting
-- add option to uncraft even if recipe is unknown
 
 ## Configurability
 
 ```
-## Settings file was created by plugin SimpleRecycling v0.0.7
+## Settings file was created by plugin SimpleRecycling v0.0.11
 ## Plugin GUID: com.github.abearcodes.valheim.simplerecycling
 
 [General]
@@ -53,6 +51,13 @@ RecyclingRate = 0.5
 # Default value: true
 UnstackableItemsAlwaysReturnAtLeastOneResource = true
 
+## If enabled, recycling will also check for the required crafting station type and level.
+## If disabled, will ignore all crafting station requirements altogether.
+## Enabled by default, to keep things close to how Valheim operates.
+# Setting type: Boolean
+# Default value: true
+RequireExactCraftingStationForRecycling = true
+
 ## If enabled and recycling an item would yield 0 of any material,
 ## instead you will receive 1. If disabled, you get nothing.
 # Setting type: Boolean
@@ -67,17 +72,17 @@ AllowRecyclingUnknownRecipes = false
 
 [Recycling on containers]
 
-## If enabled, the mod will display the container recycling button
-# Setting type: Boolean
-# Default value: true
-ContainerRecyclingEnabled = true
-
 ## The last saved recycling button position stored in JSON
 # Setting type: String
 # Default value: {\"x\":502.42425537109377,\"y\":147.06060791015626,\"z\":-1.0}
 ContainerButtonPosition = {\"x\":502.42425537109377,\"y\":147.06060791015626,\"z\":-1.0}
 
 [UI]
+
+## If enabled, the mod will display the container recycling button
+# Setting type: Boolean
+# Default value: false
+ContainerRecyclingEnabled = false
 
 ## If enabled and recycling a specific item runs into any issues, the mod will print a message
 ## in the center of the screen (native Valheim notification). At the time of implementation,
@@ -89,6 +94,49 @@ ContainerButtonPosition = {\"x\":502.42425537109377,\"y\":147.06060791015626,\"z
 # Default value: true
 NotifyOnSalvagingImpediments = true
 
+## If enabled, will display the experimental work in progress crafting tab UI
+## Enabled by default.
+# Setting type: Boolean
+# Default value: true
+EnableExperimentalCraftingTabUI = true
+
+## If enabled, it will hide equipped items in the crafting tab.
+## This does not make the item recyclable and only influences whether or not it's shown.
+## Enabled by default.
+# Setting type: Boolean
+# Default value: true
+HideRecipesForEquippedItems = true
+
+## If enabled, it will hide hotbar items in the crafting tab.
+## Enabled by default.
+# Setting type: Boolean
+# Default value: true
+IgnoreItemsOnHotbar = true
+
+## If enabled, will filter all recycling recipes based on the crafting station
+## used to produce said item. Main purpose of this is to prevent showing food
+## as a recyclable item, but can be extended further if needed.
+## Enabled by default
+# Setting type: Boolean
+# Default value: true
+StationFilterEnabled = true
+
+## Comma separated list of crafting stations (by their "piece name")
+## recipes from which should be ignored in regards to recycling.
+## Main purpose of this is to prevent showing food as a recyclable item,
+## but can be extended further if needed.
+## 
+## Full list of stations used in recipes as of 0.147.3:
+## - identifier: `$piece_forge` in game name: Forge
+## - identifier: `$piece_workbench` in game name: Workbench
+## - identifier: `$piece_cauldron` in game name: Cauldron
+## - identifier: `$piece_stonecutter` in game name: Stonecutter
+## 
+## Use the identifiers, not the in game names (duh!)
+# Setting type: String
+# Default value: $piece_cauldron
+StationFilterList = $piece_cauldron
+
 [zDebug]
 
 ## If enabled will dump a complete detailed recycling report every time. This is taxing in terms
@@ -97,10 +145,31 @@ NotifyOnSalvagingImpediments = true
 # Default value: false
 DebugAlwaysDumpAnalysisContext = false
 
+## If enabled, will spam recycling checks to the console.
+## VERY. VERY. SPAMMY. Influences performance. 
+# Setting type: Boolean
+# Default value: false
+DebugAllowSpammyLogs = false
+
+[zUtil]
+
+## Nexus mod ID for updates
+# Setting type: Int32
+# Default value: 205
+NexusID = 205
+
 ```
 
 
 ## Changelog
+
+### 0.0.12
+
+- recycling now requires the right crafting station type and level
+    - can be disabled in settings via `RequireExactCraftingStationForRecycling`
+    - ui is not final, still needs station indicator
+    
+    ![](https://i.imgur.com/PtCJ730.png)
 
 ### 0.0.11
 

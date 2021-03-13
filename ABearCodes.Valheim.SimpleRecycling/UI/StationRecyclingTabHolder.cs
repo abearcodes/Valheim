@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ABearCodes.Valheim.SimpleRecycling.Recycling;
 using UnityEngine;
@@ -43,15 +42,15 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             _recyclingTabButtonGameObject.transform.localPosition = new Vector3(-45, -94, 0);
             var textComponent = _recyclingTabButtonGameObject.GetComponentInChildren<Text>();
             textComponent.text = "RECYCLE";
-            var imageComponent = _recyclingTabButtonGameObject.GetComponent<Image>();
-            // imageComponent.color = new Color(0.7f, 1f, 0.7f);
-            
+
             _recyclingTabButtonComponent = _recyclingTabButtonGameObject.GetComponent<Button>();
             _recyclingTabButtonComponent.interactable = true;
             _recyclingTabButtonComponent.onClick.RemoveAllListeners();
             _recyclingTabButtonComponent.onClick.AddListener(OnRecycleClick);
             if(Player.m_localPlayer?.GetCurrentCraftingStation() == null)
                 _recyclingTabButtonGameObject.SetActive(false);
+
+            _recyclingTabButtonGameObject.SetActive(Player.m_localPlayer?.GetCurrentCraftingStation() != null);
         }
 
         private void OnRecycleClick()
@@ -211,18 +210,16 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                 igui.m_craftingStationIcon.gameObject.SetActive(false);
                 igui.m_craftingStationLevelRoot.gameObject.SetActive(false);
             }
-
             if (igui.get_m_selectedRecipe().Key)
             {
                 var analysisContext = _recyclingAnalysisContexts[igui.GetSelectedRecipeIndex()];
                 igui.m_recipeIcon.enabled = true;
                 igui.m_recipeName.enabled = true;
                 igui.m_recipeDecription.enabled = true;
-                ItemDrop.ItemData itemData = igui.get_m_selectedRecipe().Value;
-                int num = itemData != null ? itemData.m_quality + 1 : 1;
-                bool allowedQuality = num <= igui.get_m_selectedRecipe().Key.m_item.m_itemData.m_shared.m_maxQuality;
+                var itemData = igui.get_m_selectedRecipe().Value;
+                var num = itemData?.m_quality + 1 ?? 1;
                 igui.m_recipeIcon.sprite = igui.get_m_selectedRecipe().Key.m_item.m_itemData.m_shared
-                    .m_icons[itemData != null ? itemData.m_variant : igui.get_m_selectedVariant()];
+                    .m_icons[itemData?.m_variant ?? igui.get_m_selectedVariant()];
                 string str =
                     Localization.instance.Localize(igui.get_m_selectedRecipe().Key.m_item.m_itemData.m_shared.m_name);
                 if (analysisContext.Item.m_stack > 1)
@@ -250,7 +247,6 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                     igui.get_m_selectedRecipe().Key.m_item.m_itemData.m_shared.m_variants > 1 &&
                     igui.get_m_selectedRecipe().Value == null);
                 SetupRequirementList(analysisContext);
-                
                 igui.m_minStationLevelIcon.gameObject.SetActive(false);
                 igui.m_craftButton.interactable = analysisContext.RecyclingImpediments.Count == 0;
                 igui.m_craftButton.GetComponentInChildren<Text>().text = "Recycle";
@@ -269,9 +265,10 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                 igui.m_minStationLevelIcon.gameObject.SetActive(false);
                 igui.m_craftButton.GetComponent<UITooltip>().m_text = "";
                 igui.m_variantButton.gameObject.SetActive(false);
+                igui.m_craftButton.GetComponentInChildren<Text>().text = "Recycle";
                 igui.m_itemCraftType.gameObject.SetActive(false);
-                // for (int index = 0; index < igui.m_recipeRequirementList.Length; ++index)
-                //     InventoryGui.HideRequirement(igui.m_recipeRequirementList[index].transform);
+                for (int index = 0; index < igui.m_recipeRequirementList.Length; ++index)
+                    InventoryGui.HideRequirement(igui.m_recipeRequirementList[index].transform);
                 igui.m_craftButton.interactable = false;
             }
 
@@ -323,10 +320,10 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         public static void SetupRequirement(Transform elementRoot,
             RecyclingAnalysisContext.RecyclingYieldEntry entry)
         {
-            Image component1 = elementRoot.transform.Find("res_icon").GetComponent<Image>();
-            Text component2 = elementRoot.transform.Find("res_name").GetComponent<Text>();
-            Text component3 = elementRoot.transform.Find("res_amount").GetComponent<Text>();
-            UITooltip component4 = elementRoot.GetComponent<UITooltip>();
+            var component1 = elementRoot.transform.Find("res_icon").GetComponent<Image>();
+            var component2 = elementRoot.transform.Find("res_name").GetComponent<Text>();
+            var component3 = elementRoot.transform.Find("res_amount").GetComponent<Text>();
+            var component4 = elementRoot.GetComponent<UITooltip>();
             component1.gameObject.SetActive(true);
             component2.gameObject.SetActive(true);
             component3.gameObject.SetActive(true);
