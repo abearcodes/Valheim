@@ -33,7 +33,7 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="0Harmony, Version=2.3.0.0, Culture=neutral, PublicKeyToken=null">
+        <Reference Include="0Harmony, Version=2.3.2.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\BepInEx\core\0Harmony.dll</HintPath>
         </Reference>
         <Reference Include="assembly_googleanalytics, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -63,7 +63,7 @@
         <Reference Include="assembly_valheim, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\valheim_Data\Managed\assembly_valheim.dll</HintPath>
         </Reference>
-        <Reference Include="BepInEx, Version=5.4.6.0, Culture=neutral, PublicKeyToken=null">
+        <Reference Include="BepInEx, Version=5.4.8.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\BepInEx\core\BepInEx.dll</HintPath>
         </Reference>
         <Reference Include="BepInEx.Harmony, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -283,25 +283,23 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Crafting\InventoryDetours.cs" />
-        <Compile Include="Crafting\InventoryItemRemover.cs" />
-        <Compile Include="Crafting\UIVisualPatches.cs" />
-        <Compile Include="Patches\CompatibilityPatches.cs" />
-        <Compile Include="Patches\InventoryCallsPatches.cs" />
-        <Compile Include="Patches\InventoryPatches.cs" />
-        <Compile Include="Patches\ReversePatches.cs" />
-        <Compile Include="Patches\SmelterPatches.cs" />
+        <Compile Include="Common\CompatibilityPatches.cs" />
+        <Compile Include="Common\ReversePatches.cs" />
+        <Compile Include="Inventory\InventoryItemRemover.cs" />
+        <Compile Include="Inventory\InventoryPatches.cs" />
+        <Compile Include="Inventory\InventoryUtils.cs" />
         <Compile Include="PluginSettings.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Plugin.cs" />
+        <Compile Include="Smelting\SmelterPatches.cs" />
+        <Compile Include="Smelting\SmelterUtils.cs" />
         <Compile Include="Tracking\ContainerNetworkExtension.cs" />
         <Compile Include="Tracking\ContainerTracker.cs" />
         <Compile Include="Tracking\ContainerLifecycleHooks.cs" />
         <Compile Include="Tracking\ContainerTracker.Searcher.cs" />
         <Compile Include="Tracking\PlayerLifecycleHooks.cs" />
-        <Compile Include="Utils\HarmonyUtils.cs" />
-        <Compile Include="Utils\InventoryUtils.cs" />
-        <Compile Include="Utils\LineEffectController.cs" />
+        <Compile Include="UI\LineEffectController.cs" />
+        <Compile Include="UI\UIVisualPatches.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="stageThunderstoreRelease.ps1" />

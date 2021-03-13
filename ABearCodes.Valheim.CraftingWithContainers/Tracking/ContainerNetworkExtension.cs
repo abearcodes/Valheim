@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using ABearCodes.Valheim.CraftingWithContainers.Patches;
+using ABearCodes.Valheim.CraftingWithContainers.Common;
 
 namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
 {
@@ -18,7 +18,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
         public void Register()
         {
             _zNetView.Register("LockContainersRequest", new Action<long, long, bool>(RPC_LockContainersRequest));
-            _zNetView.Register("LockContainersResponse", new Action<long, long, bool, bool>(RPC_LockContainersResponse));
+            _zNetView.Register("LockContainersResponse",
+                new Action<long, long, bool, bool>(RPC_LockContainersResponse));
         }
 
         public void RequestContainerLock(long playerId, bool shouldLock)
@@ -32,12 +33,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
             if (!Player.m_localPlayer || Player.m_localPlayer.GetPlayerID() != playerId) return;
             Plugin.Log.LogDebug($"I should handle:{uid} pid:{playerId} L:{shouldLock} G:{granted}");
             if (granted)
-            {
                 Plugin.Log.LogDebug(
                     $"Actual object {_container.GetInventory().GetAllItems().Sum(a => a.m_stack)} total items on {_zNetView.GetZDO().m_uid}");
-                
-            }
-            
         }
 
         private void RPC_LockContainersRequest(long uid, long playerId, bool shouldLock)
@@ -74,5 +71,4 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
             _zNetView.Unregister("LockContainersResponse");
         }
     }
-
 }

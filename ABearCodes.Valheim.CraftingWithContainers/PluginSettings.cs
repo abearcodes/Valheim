@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ABearCodes.Valheim.CraftingWithContainers.Patches;
+using ABearCodes.Valheim.CraftingWithContainers.Common;
 using BepInEx.Configuration;
 using HarmonyLib;
 
@@ -10,6 +10,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
     public class PluginSettings
     {
         private ConfigEntry<string> _allowedContainerLookupPieceNames;
+        private ConfigEntry<string> _allowedKilnFuels;
 
         public PluginSettings(ConfigFile configFile)
         {
@@ -31,6 +32,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 {
                     AllowedContainerLookupPieceNamesAsList = value.Value.Split(',')
                         .Select(entry => entry.Trim())
+                        .Where(entry => !string.IsNullOrEmpty(entry))
                         .ToList();
                 }
 
@@ -39,6 +41,28 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 SplitNewValueAndSetProperty();
             }
         }
+
+        private ConfigEntry<string> AllowedKilnFuels
+        {
+            get => _allowedKilnFuels;
+            set
+            {
+                void SplitNewValueAndSetProperty()
+                {
+                    AllowedFuelsAsList = value.Value.Split(',')
+                        .Select(entry => entry.Trim())
+                        .Where(entry => !string.IsNullOrEmpty(entry))
+                        .ToList();
+                }
+
+                _allowedKilnFuels = value;
+                value.SettingChanged += (sender, args) => { SplitNewValueAndSetProperty(); };
+                SplitNewValueAndSetProperty();
+            }
+        }
+
+        public List<string> AllowedFuelsAsList { get; set; }
+
 
         public List<string> AllowedContainerLookupPieceNamesAsList { get; private set; }
 
@@ -55,6 +79,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
         public ConfigEntry<bool> AddExtractionEffectWhenCrafting { get; private set; }
         public ConfigEntry<bool> DebugForcePrintRemovalReport { get; set; }
         public ConfigEntry<bool> TakeItemsInReverseOrder { get; set; }
+        public ConfigEntry<bool> ModifyItemCountIndicator { get; set; }
 
         private void BindConfig(ConfigFile configFile)
         {
@@ -90,15 +115,25 @@ namespace ABearCodes.Valheim.CraftingWithContainers
             //     "the game uses by default for chopping blocks, tanning decks, etc\n" +
             //     "Shouldn't influence performance");
 
+            // Smelting & else
             AllowTakeFuelForKilnAndFurnace = configFile.Bind("Interactions",
                 "AllowTakeFuelForKilnAndFurnace", true,
                 "If true, will allow the mod to take fuel from nearby containers when using\n" +
                 "Kilns and Furnaces.\n");
-            
+
             AllowTakeFuelForFireplace = configFile.Bind("Interactions",
                 "AllowTakeFuelForFireplace", true,
                 "If true, will allow the mod to take fuel from nearby containers when using\n" +
                 "Fireplaces and Hearths\n");
+
+            AllowedKilnFuels = configFile.Bind("Interactions",
+                "AllowedFuels", "$item_wood",
+                "List of allowed fuels to be used by Kilns. If empty, will use any fuel.\n" +
+                "By default, only allows normal wood.\n" +
+                "Resources available as of 0.147.3 (use the left hand side identifier):\n" +
+                "$item_wood - Normal Wood\n" +
+                "$item_finewood - Fine Wood\n" +
+                "$item_roundlog - Core Wood\n");
 
 
             // Filter
@@ -113,12 +148,21 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 "Comma separated list of filtered \"holders\" for the containers:" +
                 "chests, carts, ships. Uses the name of the \"Piece\" the container is attached to");
 
+            // UI
+            ModifyItemCountIndicator = configFile.Bind("UI", "PatchRequirementsUI", true,
+                "If enabled, will add an indicator to the amount of required resources\n" +
+                "within the crafting UI, showing the total amount of items available (with containers)\n" + 
+                "You might want to disable this if you are having issues with other mods that also touch\n" +
+                "modify the requirements UI.\n" +
+                "Enabled by default. ");
+
+
             // Versioning
             // todo: implement actual logic for this. for now we want to just keep track  
             LastPluginVersionUsed = configFile.Bind("Versioning",
                 "LastPluginVersionUsed", "1.0.4",
                 "CraftingWithContainers version marker. Used to notify the user about updates");
-            
+
             // Debug
             DebugViableContainerIndicatorEnabled = configFile.Bind("zDebug",
                 "DebugViableContainerIndicatorEnabled", false,

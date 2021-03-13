@@ -1,12 +1,9 @@
-﻿using System;
-using ABearCodes.Valheim.CraftingWithContainers.Patches;
-using ABearCodes.Valheim.CraftingWithContainers.Tracking;
+﻿using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using HarmonyLib.Tools;
 using UnityEngine;
-
 
 namespace ABearCodes.Valheim.CraftingWithContainers
 {
@@ -14,7 +11,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
         "Crafting with Containers",
         "1.0.9")]
     [BepInDependency("org.bepinex.plugins.valheim_plus", BepInDependency.DependencyFlags.SoftDependency)]
-    public partial class Plugin : BaseUnityPlugin
+    public class Plugin : BaseUnityPlugin
     {
         private Harmony _harmony;
 
@@ -22,19 +19,15 @@ namespace ABearCodes.Valheim.CraftingWithContainers
         {
             Log = Logger;
         }
+
         public static ManualLogSource Log { get; private set; }
         public static PluginSettings Settings { get; private set; }
-
-        private void OnDestroy()
-        {
-            _harmony.UnpatchSelf();   
-        }
 
         private void Awake()
         {
             Settings = new PluginSettings(Config);
 #if DEBUG
-            HarmonyFileLog.Enabled = true;   
+            HarmonyFileLog.Enabled = true;
 #endif
             _harmony = new Harmony("ABearCodes.Valheim.CraftingWithContainers");
             _harmony.PatchAll();
@@ -42,15 +35,22 @@ namespace ABearCodes.Valheim.CraftingWithContainers
 
         private void LateUpdate()
         {
-            if(Input.GetKeyDown(KeyCode.F8)) ContainerTracker.ForceScanContainers();
+            if (Input.GetKeyDown(KeyCode.F8)) ContainerTracker.ForceScanContainers();
+        }
+
+        private void OnDestroy()
+        {
+            _harmony.UnpatchSelf();
         }
 
         private void OnGUI()
         {
             if (!Settings.DebugViableContainerIndicatorEnabled.Value || !Player.m_localPlayer) return;
-            foreach (var containerEntry in ContainerTracker.GetViableContainersInRangeForPlayer(Player.m_localPlayer, Settings.ContainerLookupRange.Value))
+            foreach (var containerEntry in ContainerTracker.GetViableContainersInRangeForPlayer(Player.m_localPlayer,
+                Settings.ContainerLookupRange.Value))
             {
-                var position = Camera.main.WorldToScreenPoint(containerEntry.Container.transform.position + Vector3.up * 0.5f);
+                var position =
+                    Camera.main.WorldToScreenPoint(containerEntry.Container.transform.position + Vector3.up * 0.5f);
                 if (position.z <= 0.1) continue;
                 GUI.color = Color.magenta;
                 var textSize = GUI.skin.label.CalcSize(new GUIContent("+"));

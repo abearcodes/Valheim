@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using UnityEngine;
 
 namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
 {
@@ -19,11 +18,14 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
                 // currently known "Piece"less objects: tombstone
                 !TryGetValidOwningPiece(___m_nview, out var piece))
             {
-                Plugin.Log.LogDebug($"Will not track container {__instance.m_name} ({__instance.name}). ZNetView: {___m_nview.GetZDO()?.m_uid}.");
+                Plugin.Log.LogDebug(
+                    $"Will not track container {__instance.m_name} ({__instance.name}). ZNetView: {___m_nview.GetZDO()?.m_uid}.");
                 return;
             }
+
             ContainerTracker.Add(__instance, ___m_nview, piece);
         }
+
         private static bool TryGetValidOwningPiece(ZNetView zNetView, out Piece piece)
         {
             piece = zNetView.GetComponent<Piece>();

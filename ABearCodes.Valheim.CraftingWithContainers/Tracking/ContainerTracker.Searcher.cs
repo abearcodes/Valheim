@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ABearCodes.Valheim.CraftingWithContainers.Patches;
+using ABearCodes.Valheim.CraftingWithContainers.Common;
 using UnityEngine;
 
 namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
@@ -9,6 +9,11 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
     {
         private static class ContainerSearcher
         {
+            private static readonly List<string> BlackListed = new List<string>
+            {
+                "Cart", "$ship_karve", "$ship_longship"
+            };
+
             private static bool IsContainerOnAllowedPiece(Piece owningPiece)
             {
                 return !Plugin.Settings.ShouldFilterByContainerPieceNames.Value ||
@@ -43,10 +48,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
                                       && IsContainerOwningPiecePlacedByPlayer(tracked.OwningPiece))
                     .ToList();
             }
-
-            private static readonly List<string> BlackListed = new List<string>(){
-                "Cart", "$ship_karve", "$ship_longship"
-            };
 
             private static bool IsContainerOnUnownedPieceAndAllowed(Piece owningPiece, ZNetView zNetView)
             {
