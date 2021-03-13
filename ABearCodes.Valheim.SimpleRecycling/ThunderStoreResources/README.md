@@ -8,10 +8,14 @@ Adds a tab to the crafting station that recycles (uncrafts) items from player's 
 ### Key points
 
 - the aim of the mod is to feel as much native to Valheim as possible. In many cases this will mean that the default settings in the mod are less softcore, but configurable to accomodate for all types of experiences
-- returns 50% of the resources by default (configurable) 
+- accounts for resources invested into upgraded items
+- returns 50% of the resources by default (configurable)
+- only shows items that have a recipe for crafting them, i.e. won't show wood.  
 - you need to know the recipe for the item to "uncraft" it (will be configurable)
 - requires the right crafting station type and level to recycle an item (configurable)
-    - for example, a Silver Sword upgraded to Level 4 will require a Forge of Level 4 to recycle 
+    - for example, a Silver Sword upgraded to Level 4 will require a Forge of Level 4 to recycle
+- if the mod is unable to recycle something, it reports as to why in the "description" text of the selected item
+
 
 ## Manual installation
 
