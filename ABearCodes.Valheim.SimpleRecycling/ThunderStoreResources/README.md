@@ -163,6 +163,11 @@ NexusID = 205
 
 ## Changelog
 
+### 0.0.13
+
+- fixes an issue where moving items with the recycling tab will log errors if it's the last recyclable item in the list
+- recycling bronze is now possible, other multireciped items coming _**soon**_
+
 ### 0.0.12
 
 - recycling now requires the right crafting station type and level
