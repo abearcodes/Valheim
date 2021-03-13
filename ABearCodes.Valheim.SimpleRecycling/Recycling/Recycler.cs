@@ -166,11 +166,8 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             }
             if (foundRecipes.Count > 1)
             {
-                analysisContext.RecyclingImpediments.Add(
-                    $"Found multiple recipes ({foundRecipes.Count}) for {Localization.instance.Localize(item.m_shared.m_name)}");
-                analysisContext.DisplayImpediments.Add($"Found multiple recipes ({foundRecipes.Count}) for {Localization.instance.Localize(item.m_shared.m_name)}");
-                analysisContext.Recipe = null;
-                return false;
+                //todo: handle multi recipe thing, rework later
+                foundRecipes = foundRecipes.OrderBy(r => r.m_amount).Take(1).ToList();
             }
             
             analysisContext.Recipe = foundRecipes.FirstOrDefault();
