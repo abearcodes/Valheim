@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace ABearCodes.Valheim.SimpleRecycling.Recycling
 {
@@ -83,7 +84,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
             var item = analysisContext.Item;
             if (currentCraftingStation == null 
                 || currentCraftingStation.m_name != recipeCraftingStation.m_name
-                || currentCraftingStation.GetLevel() < recipeCraftingStation.GetLevel())
+                || currentCraftingStation.GetLevel() < analysisContext.Item.m_quality)
             {
                 analysisContext.RecyclingImpediments.Add(
                     $"Recipe requires " +
