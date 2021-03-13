@@ -100,7 +100,7 @@ _*for brevity, CwC stands for CraftingWithContainers further on_
 ### 1.0.10
 
 - fixed graphical item "attract" effect not spawning at the right position
-- added a filter for which fuel to use when using Kilns and Smelters  
+- added a filter for which fuel to use when using Kilns (Smelters always use coal)
 - no more transpiler patching 
     - should improve compatibility with other mods, tested: Epic Loot, Multicraft
     - while it feels "right" not to copy-paste code from the game to get similar functionality, it's really hard to get things working with other mods that completely reroute functionality. Compatibility patches also become a major pain.
