@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ABearCodes.Valheim.CraftingWithContainers.Utils
+namespace ABearCodes.Valheim.CraftingWithContainers.UI
 {
     public static class LineEffectCreator
     {

@@ -11,8 +11,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.UI
         [HarmonyPatch(typeof(InventoryGui), "SetupRequirement",
             typeof(Transform), typeof(Piece.Requirement),
             typeof(Player), typeof(bool), typeof(int))]
-        private static bool PatchRequirementAmountIndicator(Transform elementRoot,
-            Piece.Requirement req, Player player, bool craft, int quality)
+        private static bool SetupRequirementTotalItemsIndicatorPatch(Transform elementRoot,
+            Piece.Requirement req, Player player, bool craft, int quality, ref bool __result)
         {
             if (!Plugin.Settings.CraftingWithContainersEnabled.Value ||
                 !Plugin.Settings.ModifyItemCountIndicator.Value)
@@ -34,15 +34,17 @@ namespace ABearCodes.Valheim.CraftingWithContainers.UI
             if (amount <= 0)
             {
                 InventoryGui.HideRequirement(elementRoot);
+                __result = false;
                 return false;
             }
-
+            
             component3.text = string.Format($"{amount}/{num}");
             if (num < amount)
                 component3.color = (double) Mathf.Sin(Time.time * 10f) > 0.0 ? Color.red : Color.white;
             else
                 component3.color = Color.white;
-            return true;
+            __result = true;
+            return false;
         }
 
         [HarmonyPatch(typeof(InventoryGui), "DoCrafting", typeof(Player))]

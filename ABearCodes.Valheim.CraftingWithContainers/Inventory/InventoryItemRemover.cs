@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using ABearCodes.Valheim.CraftingWithContainers.Common;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
-using ABearCodes.Valheim.CraftingWithContainers.Utils;
+using ABearCodes.Valheim.CraftingWithContainers.UI;
 using HarmonyLib;
 
 namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
