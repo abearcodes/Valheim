@@ -97,6 +97,10 @@ _*for brevity, CwC stands for CraftingWithContainers further on_
 
 # Changelog
 
+### 1.0.11
+
+- fixed total amount of resources not showing when not using any other overriding mods :)
+
 ### 1.0.10
 
 - fixed graphical item "attract" effect not spawning at the right position
