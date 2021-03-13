@@ -1,7 +1,7 @@
 ﻿
 # Crafting with Containers
 
-![demo](https://raw.githubusercontent.com/abearcodes/Valheim/development/ABearCodes.Valheim.CraftingWithContainers/ThunderStoreResources/succ.gif)
+![Demo](https://i.postimg.cc/C1JKgzF5/succ.gif)
 
 Are you tired of rummaging through chests to find that one missing ingredient that you know is somewhere? Tired of having to split stacks, craft and then put it all back again? 
 
@@ -26,7 +26,7 @@ Drop the `.dll` into `<GameLocation>\BepInEx\plugins`
 
 Please create an issue in the GitHub repo here:
 
-https://github.com/abearcodes/Valheim/issues/new
+https://github.com/abearcodes/Valheim/issues
  
 ## Configuration
 
