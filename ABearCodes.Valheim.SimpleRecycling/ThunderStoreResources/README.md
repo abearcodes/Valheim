@@ -5,18 +5,13 @@
 
 Adds a tab to the crafting station that recycles (uncrafts) items from player's inventory. 
 
-Previously this mod operated via a button placed on containers. Both are still in and can be enabled via settings. Container approach is kept for compatibility and will be removed in future versions. 
-
-![demo](https://i.imgur.com/91ILtUh.png)
-
 ### Key points
 
-- Returns 50% of the resources by default. Configurable via settings. 
-- You need to know the recipe for the item to "uncraft" it
-- You can move the recycling button by pressing the left Ctrl and right click dragging the button
-- Has a fail safe to prevent accidental presses
-  
-    ![](https://i.imgur.com/iAbLzvN.png)
+- the aim of the mod is to feel as much native to Valheim as possible. In many cases this will mean that the default settings in the mod are less softcore, but configurable to accomodate for all types of experiences
+- returns 50% of the resources by default (configurable) 
+- you need to know the recipe for the item to "uncraft" it (will be configurable)
+- requires the right crafting station type and level to recycle an item (configurable)
+    - for example, a Silver Sword upgraded to Level 4 will require a Forge of Level 4 to recycle 
 
 ## Manual installation
 
@@ -31,7 +26,6 @@ https://github.com/abearcodes/Valheim/issues/new
 ## Development plans
 
 - introduce a separate buildable "station" to do the uncrafting
-- add option to uncraft even if recipe is unknown
 
 ## Configurability
 
