@@ -79,8 +79,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
                 igui.m_tabUpgrade.gameObject.SetActive(true);
 
             UpdateRecyclingList();
-
-
+            
             if (igui.get_m_availableRecipes().Count > 0)
             {
                 if (igui.get_m_selectedRecipe().Key != null)

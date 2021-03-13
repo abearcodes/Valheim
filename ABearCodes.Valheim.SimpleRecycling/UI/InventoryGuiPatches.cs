@@ -68,7 +68,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         {
             if (Plugin.RecyclingTabButtonHolder == null || !Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
             Plugin.RecyclingTabButtonHolder.UpdateRecyclingList();
-            InventoryGui.instance.SetRecipe(0, false);
+            InventoryGui.instance.SetRecipe(-1, false);
         }
         
         [HarmonyPostfix]
@@ -78,7 +78,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         {
             if (Plugin.RecyclingTabButtonHolder == null || __instance != Player.m_localPlayer || !Plugin.RecyclingTabButtonHolder.InRecycleTab()) return;
             Plugin.RecyclingTabButtonHolder.UpdateRecyclingList();
-            InventoryGui.instance.SetRecipe(0, false);
+            InventoryGui.instance.SetRecipe(-1, false);
         }
 
         [HarmonyReversePatch]
