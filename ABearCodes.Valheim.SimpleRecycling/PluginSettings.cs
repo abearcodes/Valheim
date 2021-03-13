@@ -25,6 +25,12 @@ namespace ABearCodes.Valheim.SimpleRecycling
                 "If enabled and recycling a specific _unstackable_ item would yield 0 of a material,\n" +
                 "instead you will receive 1. If disabled, you get nothing.");
 
+            RequireExactCraftingStationForRecycling = config.Bind("General",
+                "RequireExactCraftingStationForRecycling", true,
+                "If enabled, recycling will also check for the required crafting station type and level.\n" +
+                "If disabled, will ignore all crafting station requirements altogether.\n" +
+                "Enabled by default, to keep things close to how Valheim operates.");
+
             PreventZeroResourceYields = config.Bind("General", "PreventZeroResourceYields", true,
                 "If enabled and recycling an item would yield 0 of any material,\n" +
                 "instead you will receive 1. If disabled, you get nothing.");
@@ -133,5 +139,7 @@ namespace ABearCodes.Valheim.SimpleRecycling
         public ConfigEntry<bool> DebugAlwaysDumpAnalysisContext { get; }
         public ConfigEntry<bool> DebugAllowSpammyLogs { get; }
         public ConfigEntry<bool> HideEquippedItemsInRecyclingTab { get; }
+        public ConfigEntry<bool> RequireExactCraftingStationForRecycling { get; }
+        
     }
 }

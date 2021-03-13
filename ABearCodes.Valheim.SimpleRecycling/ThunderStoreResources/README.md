@@ -36,7 +36,7 @@ https://github.com/abearcodes/Valheim/issues/new
 ## Configurability
 
 ```
-## Settings file was created by plugin SimpleRecycling v0.0.7
+## Settings file was created by plugin SimpleRecycling v0.0.11
 ## Plugin GUID: com.github.abearcodes.valheim.simplerecycling
 
 [General]
@@ -53,6 +53,13 @@ RecyclingRate = 0.5
 # Default value: true
 UnstackableItemsAlwaysReturnAtLeastOneResource = true
 
+## If enabled, recycling will also check for the required crafting station type and level.
+## If disabled, will ignore all crafting station requirements altogether.
+## Enabled by default, to keep things close to how Valheim operates.
+# Setting type: Boolean
+# Default value: true
+RequireExactCraftingStationForRecycling = true
+
 ## If enabled and recycling an item would yield 0 of any material,
 ## instead you will receive 1. If disabled, you get nothing.
 # Setting type: Boolean
@@ -67,17 +74,17 @@ AllowRecyclingUnknownRecipes = false
 
 [Recycling on containers]
 
-## If enabled, the mod will display the container recycling button
-# Setting type: Boolean
-# Default value: true
-ContainerRecyclingEnabled = true
-
 ## The last saved recycling button position stored in JSON
 # Setting type: String
 # Default value: {\"x\":502.42425537109377,\"y\":147.06060791015626,\"z\":-1.0}
 ContainerButtonPosition = {\"x\":502.42425537109377,\"y\":147.06060791015626,\"z\":-1.0}
 
 [UI]
+
+## If enabled, the mod will display the container recycling button
+# Setting type: Boolean
+# Default value: false
+ContainerRecyclingEnabled = false
 
 ## If enabled and recycling a specific item runs into any issues, the mod will print a message
 ## in the center of the screen (native Valheim notification). At the time of implementation,
@@ -89,6 +96,49 @@ ContainerButtonPosition = {\"x\":502.42425537109377,\"y\":147.06060791015626,\"z
 # Default value: true
 NotifyOnSalvagingImpediments = true
 
+## If enabled, will display the experimental work in progress crafting tab UI
+## Enabled by default.
+# Setting type: Boolean
+# Default value: true
+EnableExperimentalCraftingTabUI = true
+
+## If enabled, it will hide equipped items in the crafting tab.
+## This does not make the item recyclable and only influences whether or not it's shown.
+## Enabled by default.
+# Setting type: Boolean
+# Default value: true
+HideRecipesForEquippedItems = true
+
+## If enabled, it will hide hotbar items in the crafting tab.
+## Enabled by default.
+# Setting type: Boolean
+# Default value: true
+IgnoreItemsOnHotbar = true
+
+## If enabled, will filter all recycling recipes based on the crafting station
+## used to produce said item. Main purpose of this is to prevent showing food
+## as a recyclable item, but can be extended further if needed.
+## Enabled by default
+# Setting type: Boolean
+# Default value: true
+StationFilterEnabled = true
+
+## Comma separated list of crafting stations (by their "piece name")
+## recipes from which should be ignored in regards to recycling.
+## Main purpose of this is to prevent showing food as a recyclable item,
+## but can be extended further if needed.
+## 
+## Full list of stations used in recipes as of 0.147.3:
+## - identifier: `$piece_forge` in game name: Forge
+## - identifier: `$piece_workbench` in game name: Workbench
+## - identifier: `$piece_cauldron` in game name: Cauldron
+## - identifier: `$piece_stonecutter` in game name: Stonecutter
+## 
+## Use the identifiers, not the in game names (duh!)
+# Setting type: String
+# Default value: $piece_cauldron
+StationFilterList = $piece_cauldron
+
 [zDebug]
 
 ## If enabled will dump a complete detailed recycling report every time. This is taxing in terms
@@ -97,10 +147,31 @@ NotifyOnSalvagingImpediments = true
 # Default value: false
 DebugAlwaysDumpAnalysisContext = false
 
+## If enabled, will spam recycling checks to the console.
+## VERY. VERY. SPAMMY. Influences performance. 
+# Setting type: Boolean
+# Default value: false
+DebugAllowSpammyLogs = false
+
+[zUtil]
+
+## Nexus mod ID for updates
+# Setting type: Int32
+# Default value: 205
+NexusID = 205
+
 ```
 
 
 ## Changelog
+
+### 0.0.12
+
+- recycling now requires the right crafting station type and level
+    - can be disabled in settings via `RequireExactCraftingStationForRecycling`
+    - ui is not final, still needs station indicator
+    
+    ![](https://i.imgur.com/PtCJ730.png)
 
 ### 0.0.11
 

@@ -66,13 +66,33 @@ namespace ABearCodes.Valheim.SimpleRecycling.Recycling
         public static bool TryAnalyzeOneItem(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
         {
             if (!TryFindRecipeForItem(analysisContext, player)) return false;
+            AnalyzeCraftingStationRequirements(analysisContext, player);
             //todo: optimize two .GetComponent<ItemDrop> calls 
             AnalyzeMaterialYieldForItem(analysisContext);
             AnalyzeInventoryHasEnoughEmptySlots(analysisContext, inventory);
             AnalyzeItemDisplayImpediments(analysisContext, inventory, player);
             return true;
         }
-                
+
+        private static void AnalyzeCraftingStationRequirements(RecyclingAnalysisContext analysisContext, Player player)
+        {
+            if (!Plugin.Settings.RequireExactCraftingStationForRecycling.Value) return;
+            var recipeCraftingStation = analysisContext.Recipe.m_craftingStation;
+            if (recipeCraftingStation == null) return;
+            var currentCraftingStation = Player.m_localPlayer.GetCurrentCraftingStation();
+            var item = analysisContext.Item;
+            if (currentCraftingStation == null 
+                || currentCraftingStation.m_name != recipeCraftingStation.m_name
+                || currentCraftingStation.GetLevel() < recipeCraftingStation.GetLevel())
+            {
+                analysisContext.RecyclingImpediments.Add(
+                    $"Recipe requires " +
+                    $"<color=orange>{Plugin.Localize(recipeCraftingStation.m_name)}</color> " +
+                    $"of level <color=orange>{item.m_quality}</color>");
+            }
+        }
+
+        
         private static void AnalyzeItemDisplayImpediments(RecyclingAnalysisContext analysisContext, Inventory inventory, Player player)
         {
             if (player.GetInventory() != inventory) return;
