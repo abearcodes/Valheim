@@ -16,22 +16,33 @@ namespace ABearCodes.Valheim.CraftingWithContainers
     [BepInDependency("org.bepinex.plugins.valheim_plus", BepInDependency.DependencyFlags.SoftDependency)]
     public partial class Plugin : BaseUnityPlugin
     {
+        private Harmony _harmony;
+
         public Plugin()
         {
             Log = Logger;
         }
         public static ManualLogSource Log { get; private set; }
         public static PluginSettings Settings { get; private set; }
-        
+
+        private void OnDestroy()
+        {
+            _harmony.UnpatchSelf();   
+        }
+
         private void Awake()
         {
             Settings = new PluginSettings(Config);
 #if DEBUG
             HarmonyFileLog.Enabled = true;   
 #endif
-            var harmony = new Harmony("ABearCodes.Valheim.CraftingWithContainers");
-            CompatibilityFixer.Apply(harmony);
-            harmony.PatchAll();
+            _harmony = new Harmony("ABearCodes.Valheim.CraftingWithContainers");
+            _harmony.PatchAll();
+        }
+
+        private void LateUpdate()
+        {
+            if(Input.GetKeyDown(KeyCode.F8)) ContainerTracker.ForceScanContainers();
         }
 
         private void OnGUI()
