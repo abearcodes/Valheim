@@ -1,0 +1,84 @@
+diff --git a/ABearCodes.Valheim.CraftingWithContainers/Tracking/ContainerTracker.Searcher.cs b/ABearCodes.Valheim.CraftingWithContainers/Tracking/ContainerTracker.Searcher.cs
+index 7db63d9..6edc18a 100644
+--- a/ABearCodes.Valheim.CraftingWithContainers/Tracking/ContainerTracker.Searcher.cs
++++ b/ABearCodes.Valheim.CraftingWithContainers/Tracking/ContainerTracker.Searcher.cs
+@@ -7,6 +7,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
+ {
+     public partial class ContainerTracker
+     {
++        public static bool DetailedLogging { get; set; }
+         private static class ContainerSearcher
+         {
+             private static readonly List<string> BlackListed = new List<string>
+@@ -38,16 +39,62 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
+                 var playerID = player.GetPlayerID();
+                 var playerPosition = player.transform.position;
+                 // todo: deal with guardstones :(
+-                return allContainers
+-                    .Where(tracked => tracked.Container != null
+-                                      && tracked.Container.CheckAccess(playerID)
+-                                      && IsContainerInRange(tracked.Container, playerPosition, range)
+-                                      && IsContainerOnAllowedPiece(tracked.OwningPiece)
+-                                      // todo: replace by proper networking fix
+-                                      && IsContainerOnUnownedPieceAndAllowed(tracked.OwningPiece, tracked.ZNetView)
+-                                      && IsContainerOwningPiecePlacedByPlayer(tracked.OwningPiece))
+-                    .ToList();
++                var shouldDebugPrint = DetailedLogging; 
++                var foundContainers = new List<TrackedContainer>();
++                foreach (var tracked in allContainers)
++                {
++                    // used to be an easily readable foreach expression, but for the purpose of debugging
++                    // had to explode into this if mess
++                    if (tracked.Container == null)
++                    {
++                        if(shouldDebugPrint) 
++                            Plugin.Log.LogDebug("Reference to container was null");
++                        continue;
++                    }
++
++                    if (!tracked.Container.CheckAccess(playerID))
++                    {
++                        if(shouldDebugPrint)
++                            Plugin.Log.LogDebug($"Container {tracked.Container.m_name} ({tracked.Container.GetInstanceID()}) inv: {tracked.Container.GetInventory().GetHashCode()} invalid. No access for {playerID}");
++                        continue;
++                    }
++
++                    if (!IsContainerInRange(tracked.Container, playerPosition, range))
++                    {
++                        if(shouldDebugPrint)
++                            Plugin.Log.LogDebug($"Container {tracked.Container.m_name} ({tracked.Container.GetInstanceID()}) inv: {tracked.Container.GetInventory().GetHashCode()} invalid. Not in range of {playerID}");
++                        continue;
++                    }
++
++                    if (!IsContainerOnAllowedPiece(tracked.OwningPiece))
++                    {
++                        if(shouldDebugPrint)
++                            Plugin.Log.LogDebug($"Container {tracked.Container.m_name} ({tracked.Container.GetInstanceID()}) inv: {tracked.Container.GetInventory().GetHashCode()} invalid. Not on allowed piece ({tracked.OwningPiece?.m_name})");
++                        continue;
++                    }
++
++                    if (!IsContainerOnUnownedPieceAndAllowed(tracked.OwningPiece, tracked.ZNetView))
++                    {
++                        if(shouldDebugPrint)
++                            Plugin.Log.LogDebug($"Container {tracked.Container.m_name} ({tracked.Container.GetInstanceID()}) inv: {tracked.Container.GetInventory().GetHashCode()} invalid. Blacklisted piece and player zdo ({player}) is not the owner ({tracked.Container.IsOwner()}). Owner: {tracked.ZNetView.GetZDO().m_owner}");
++                        continue;
++                    }
++
++                    if (!IsContainerOwningPiecePlacedByPlayer(tracked.OwningPiece))
++                    {
++                        if(shouldDebugPrint)
++                            Plugin.Log.LogDebug($"Container {tracked.Container.m_name} ({tracked.Container.GetInstanceID()}) inv: {tracked.Container.GetInventory().GetHashCode()} invalid. Not placed by a player");
++                        continue;
++                    }
++                    if(shouldDebugPrint)
++                        Plugin.Log.LogDebug($"Container {tracked.Container.m_name} ({tracked.Container.GetInstanceID()}) inv: {tracked.Container.GetInventory().GetHashCode()} valid (!)");                    
++                    foundContainers.Add(tracked);
++                }
++
++                return foundContainers;
+             }
++            
++            
+ 
+             private static bool IsContainerOnUnownedPieceAndAllowed(Piece owningPiece, ZNetView zNetView)
+             {

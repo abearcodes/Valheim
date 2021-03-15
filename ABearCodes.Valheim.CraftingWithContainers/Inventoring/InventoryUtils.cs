@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ABearCodes.Valheim.CraftingWithContainers.Common;
-using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using HarmonyLib;
 using UnityEngine;
 
-namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
+namespace ABearCodes.Valheim.CraftingWithContainers.Inventoring
 {
     public static class InventoryUtils
     {
@@ -13,7 +11,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
         ///     Removes as much as possible from an inventory and returns the amount left to remove
         /// </summary>
         /// <returns>amount of items taken</returns>
-        public static int RemoveItemAsMuchAsPossible(this global::Inventory inventory, string name, int requestedAmount)
+        public static int RemoveItemAsMuchAsPossible(this Inventory inventory, string name, int requestedAmount)
         {
             var currentInventoryCount = inventory.CountItemsOriginal(name);
             var itemsToTake = currentInventoryCount < requestedAmount
@@ -27,10 +25,11 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
             return itemsToTake;
         }
 
-        public static void RemoveItemReversed(this global::Inventory inventory, string name, int amount)
+        public static void RemoveItemReversed(this Inventory inventory, string name, int amount)
         {
+            Plugin.Log.LogDebug($"Reversed item removal for {name} ({amount}) triggered");
             var m_inventory =
-                (List<ItemDrop.ItemData>) AccessTools.Field(typeof(global::Inventory), "m_inventory").GetValue(inventory);
+                (List<ItemDrop.ItemData>) AccessTools.Field(typeof(Inventory), "m_inventory").GetValue(inventory);
             for (var index = m_inventory.Count - 1; index >= 0; index--)
             {
                 var itemData = m_inventory[index];

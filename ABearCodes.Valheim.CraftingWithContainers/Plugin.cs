@@ -53,8 +53,12 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                     Camera.main.WorldToScreenPoint(containerEntry.Container.transform.position + Vector3.up * 0.5f);
                 if (position.z <= 0.1) continue;
                 GUI.color = Color.magenta;
-                var textSize = GUI.skin.label.CalcSize(new GUIContent("+"));
-                GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), "+");
+                var textToShow = !Settings.DebugViableContainerIndicatorDetailedEnabled.Value? "+"
+                    : $"inv#:{containerEntry.Container.GetInventory().GetHashCode()}\n" +
+                      $"(uid:{containerEntry.ZNetView.GetZDO().m_uid.id})\n" +
+                      $"(own:{containerEntry.ZNetView.GetZDO().m_owner})";
+                var textSize = GUI.skin.label.CalcSize(new GUIContent(textToShow));
+                GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), textToShow);
             }
         }
     }

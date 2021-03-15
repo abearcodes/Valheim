@@ -3,15 +3,16 @@ using System.Linq;
 using ABearCodes.Valheim.CraftingWithContainers.Common;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using HarmonyLib;
+using UnityEngine;
 
-namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
+namespace ABearCodes.Valheim.CraftingWithContainers.Inventoring
 {
     [HarmonyPatch]
     public class InventoryPatches
     {
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(global::Inventory), "GetItem", typeof(string))]
-        public static bool GetItemReversed(global::Inventory __instance, string name, List<ItemDrop.ItemData> ___m_inventory,
+        [HarmonyPatch(typeof(Inventory), "GetItem", typeof(string))]
+        public static bool GetItemReversed(Inventory __instance, string name, List<ItemDrop.ItemData> ___m_inventory,
             ref ItemDrop.ItemData __result)
         {
             if (!Plugin.Settings.TakeItemsInReverseOrder.Value) return true;
@@ -29,8 +30,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(global::Inventory), "CountItems", typeof(string))]
-        private static void CountItemsPatch(global::Inventory __instance, string name, ref int __result)
+        [HarmonyPatch(typeof(Inventory), "CountItems", typeof(string))]
+        private static void CountItemsPatch(Inventory __instance, string name, ref int __result)
         {
             if (!Plugin.Settings.CraftingWithContainersEnabled.Value ||
                 !ContainerTracker.PlayerByInventoryDict.TryGetValue(__instance.GetHashCode(), out var player))
@@ -46,8 +47,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(global::Inventory), "RemoveItem", typeof(string), typeof(int))]
-        public static bool RemoveItemPatch(global::Inventory __instance, string name, int amount,
+        [HarmonyPatch(typeof(Inventory), "RemoveItem", typeof(string), typeof(int))]
+        public static bool RemoveItemPatch(Inventory __instance, string name, int amount,
             List<ItemDrop.ItemData> ___m_inventory)
         {
             if (!Plugin.Settings.CraftingWithContainersEnabled.Value ||
@@ -56,10 +57,10 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
                 __instance.RemoveItemOriginal(name, amount);
                 return true;
             }
-
+            Debug.Log($"player: {player.GetPlayerName()} ({player.GetInstanceID()} via {__instance.GetHashCode()})");
             var containers = ContainerTracker.GetViableContainersInRangeForPlayer(player,
                 Plugin.Settings.ContainerLookupRange.Value);
-
+            Debug.Log($"RemoveItem got {containers.Count} containers");
             InventoryItemRemover.IterateAndRemoveItemsFromInventories(player, containers, name, amount,
                 out var removalReport);
 
@@ -76,8 +77,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(global::Inventory), "HaveItem", typeof(string))]
-        public static void HaveItemPatch(global::Inventory __instance, string name, ref bool __result)
+        [HarmonyPatch(typeof(Inventory), "HaveItem", typeof(string))]
+        public static void HaveItemPatch(Inventory __instance, string name, ref bool __result)
         {
             if (!Plugin.Settings.CraftingWithContainersEnabled.Value
                 || !ContainerTracker.PlayerByInventoryDict.TryGetValue(__instance.GetHashCode(), out var player)

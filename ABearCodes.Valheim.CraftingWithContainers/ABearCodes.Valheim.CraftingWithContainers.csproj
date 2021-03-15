@@ -285,9 +285,9 @@
     <ItemGroup>
         <Compile Include="Common\CompatibilityPatches.cs" />
         <Compile Include="Common\ReversePatches.cs" />
-        <Compile Include="Inventory\InventoryItemRemover.cs" />
-        <Compile Include="Inventory\InventoryPatches.cs" />
-        <Compile Include="Inventory\InventoryUtils.cs" />
+        <Compile Include="Inventoring\InventoryItemRemover.cs" />
+        <Compile Include="Inventoring\InventoryPatches.cs" />
+        <Compile Include="Inventoring\InventoryUtils.cs" />
         <Compile Include="PluginSettings.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Plugin.cs" />

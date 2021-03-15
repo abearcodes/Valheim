@@ -9,11 +9,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
     {
         private static class ContainerSearcher
         {
-            private static readonly List<string> BlackListed = new List<string>
-            {
-                "Cart", "$ship_karve", "$ship_longship"
-            };
-
             private static bool IsContainerOnAllowedPiece(Piece owningPiece)
             {
                 return !Plugin.Settings.ShouldFilterByContainerPieceNames.Value ||
@@ -43,15 +38,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
                                       && tracked.Container.CheckAccess(playerID)
                                       && IsContainerInRange(tracked.Container, playerPosition, range)
                                       && IsContainerOnAllowedPiece(tracked.OwningPiece)
-                                      // todo: replace by proper networking fix
-                                      && IsContainerOnUnownedPieceAndAllowed(tracked.OwningPiece, tracked.ZNetView)
                                       && IsContainerOwningPiecePlacedByPlayer(tracked.OwningPiece))
                     .ToList();
-            }
-
-            private static bool IsContainerOnUnownedPieceAndAllowed(Piece owningPiece, ZNetView zNetView)
-            {
-                return !BlackListed.Contains(owningPiece.m_name) || zNetView.IsOwner();
             }
         }
     }

@@ -8,7 +8,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
     {
         private static readonly List<TrackedContainer> _containers = new List<TrackedContainer>();
 
-        private static readonly Dictionary<long, ContainerNetworkExtension> _extensions =
+        internal static readonly Dictionary<long, ContainerNetworkExtension> _networkExtensions =
             new Dictionary<long, ContainerNetworkExtension>();
 
         public static Dictionary<long, Player> PlayerByInventoryDict { get; } = new Dictionary<long, Player>();
@@ -17,18 +17,18 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
         {
             _containers.RemoveAll(tracked => tracked.Container == null);
             _containers.Add(new TrackedContainer(container, zNetView, piece));
-            // var extension = new ContainerNetworkExtension(container, zNetView);
-            // extension.Register();
-            // _extensions[container.GetInstanceID()] = extension;
+            var extension = new ContainerNetworkExtension(container, zNetView);
+            extension.Register();
+            _networkExtensions[container.GetInstanceID()] = extension;
         }
 
         public static void Remove(Container container)
         {
             _containers.RemoveAll(tracked => tracked.Container == null || tracked.Container == container);
-            // if (!_extensions.TryGetValue(container.GetInstanceID(), out var extension))
-            //     return;
-            // extension.Unregister();
-            // _extensions.Remove(container.GetInstanceID());
+            if (!_networkExtensions.TryGetValue(container.GetInstanceID(), out var extension))
+                return;
+            extension.Unregister();
+            _networkExtensions.Remove(container.GetInstanceID());
         }
 
         public static List<TrackedContainer> GetViableContainersInRangeForPlayer(Player player, float range)
@@ -51,7 +51,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
                     piece == null)
                 {
                     Plugin.Log.LogDebug(
-                        $"Will not track container {container.m_name} ({container.name}). ZNetView: {zNetView.GetZDO()?.m_uid}.");
+                        $"Will not track container {container.m_name} ({container.name}). Inventory hash: {container.GetInventory().GetHashCode()} ZNetView: {zNetView.GetZDO()?.m_uid}.");
                     continue;
                 }
 
@@ -62,6 +62,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
 
             foreach (var player in Player.GetAllPlayers())
                 PlayerByInventoryDict[player.GetInventory().GetHashCode()] = player;
+            Plugin.Log.LogDebug($"Added {PlayerByInventoryDict.Count} players");
         }
     }
 
@@ -77,5 +78,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
         public Container Container { get; }
         public ZNetView ZNetView { get; }
         public Piece OwningPiece { get; }
+
+        public ContainerNetworkExtension NetworkExtension => ContainerTracker._networkExtensions[Container.GetInstanceID()];
     }
 }

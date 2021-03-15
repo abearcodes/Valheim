@@ -80,6 +80,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers
         public ConfigEntry<bool> DebugForcePrintRemovalReport { get; set; }
         public ConfigEntry<bool> TakeItemsInReverseOrder { get; set; }
         public ConfigEntry<bool> ModifyItemCountIndicator { get; set; }
+        
+        public ConfigEntry<bool> DebugViableContainerIndicatorDetailedEnabled { get; set; }
 
         private void BindConfig(ConfigFile configFile)
         {
@@ -151,7 +153,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
             // UI
             ModifyItemCountIndicator = configFile.Bind("UI", "PatchRequirementsUI", true,
                 "If enabled, will add an indicator to the amount of required resources\n" +
-                "within the crafting UI, showing the total amount of items available (with containers)\n" + 
+                "within the crafting UI, showing the total amount of items available (with containers)\n" +
                 "You might want to disable this if you are having issues with other mods that also touch\n" +
                 "modify the requirements UI.\n" +
                 "Enabled by default. ");
@@ -168,6 +170,10 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 "DebugViableContainerIndicatorEnabled", false,
                 "Shows nearby viable containers by adding a small indicator on containers that are\n" +
                 "considered viable according to the current settings.");
+            DebugViableContainerIndicatorDetailedEnabled = configFile.Bind("zDebug",
+                "DebugViableContainerDetailedEnabled", false,
+                "Instead of using a \"small\" indicator for viable chests, displays the chests\n" +
+                "inventory hashcode + owner ZDO userid.");
             DebugForcePrintRemovalReport = configFile.Bind("zDebug",
                 "DebugAlwaysPrintRemovalReport", false,
                 "If enabled, prints the removal reports always and not only when issues happen");

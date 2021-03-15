@@ -1,5 +1,5 @@
 ﻿using ABearCodes.Valheim.CraftingWithContainers.Common;
-using ABearCodes.Valheim.CraftingWithContainers.Inventory;
+using ABearCodes.Valheim.CraftingWithContainers.Inventoring;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using HarmonyLib;
 

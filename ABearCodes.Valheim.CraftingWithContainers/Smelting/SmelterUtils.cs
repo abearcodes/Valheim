@@ -2,7 +2,7 @@
 {
     public static class SmelterUtils
     {
-        public static ItemDrop.ItemData FindCookableItemFiltered(this Smelter smelter, global::Inventory inventory)
+        public static ItemDrop.ItemData FindCookableItemFiltered(this Smelter smelter, Inventory inventory)
         {
             Plugin.Log.LogDebug($"Searching {smelter.m_conversion.Count} conversions for {smelter.m_name}");
             foreach (var itemConversion in smelter.m_conversion)

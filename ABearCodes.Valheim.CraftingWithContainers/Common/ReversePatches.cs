@@ -7,15 +7,15 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Common
     public static class ReversePatches
     {
         [HarmonyReversePatch]
-        [HarmonyPatch(typeof(global::Inventory), "CountItems")]
-        public static int CountItemsOriginal(this global::Inventory __instance, string name)
+        [HarmonyPatch(typeof(Inventory), "CountItems")]
+        public static int CountItemsOriginal(this Inventory __instance, string name)
         {
             throw new NotImplementedException("stub");
         }
 
         [HarmonyReversePatch]
-        [HarmonyPatch(typeof(global::Inventory), "RemoveItem", typeof(string), typeof(int))]
-        public static void RemoveItemOriginal(this global::Inventory __instance, string name, int amount)
+        [HarmonyPatch(typeof(Inventory), "RemoveItem", typeof(string), typeof(int))]
+        public static void RemoveItemOriginal(this Inventory __instance, string name, int amount)
         {
             throw new NotImplementedException("stub");
         }
@@ -35,16 +35,16 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Common
         }
 
         [HarmonyReversePatch]
-        [HarmonyPatch(typeof(global::Inventory), "Changed")]
-        public static void Changed(this global::Inventory instance)
+        [HarmonyPatch(typeof(Inventory), "Changed")]
+        public static void Changed(this Inventory instance)
         {
             throw new NotImplementedException("stub");
         }
 
 
         [HarmonyReversePatch]
-        [HarmonyPatch(typeof(global::Inventory), "HaveItem", typeof(string))]
-        public static bool HaveItemOriginal(this global::Inventory instance, string name)
+        [HarmonyPatch(typeof(Inventory), "HaveItem", typeof(string))]
+        public static bool HaveItemOriginal(this Inventory instance, string name)
         {
             throw new NotImplementedException("stub");
         }
@@ -72,8 +72,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Common
         }
 
         [HarmonyReversePatch]
-        [HarmonyPatch(typeof(Smelter), "FindCookableItem", typeof(global::Inventory))]
-        public static ItemDrop.ItemData FindCookableItem(this Smelter instance, global::Inventory inventory)
+        [HarmonyPatch(typeof(Smelter), "FindCookableItem", typeof(Inventory))]
+        public static ItemDrop.ItemData FindCookableItem(this Smelter instance, Inventory inventory)
         {
             throw new NotImplementedException("stub");
         }

@@ -4,41 +4,43 @@ using System.Text;
 using ABearCodes.Valheim.CraftingWithContainers.Common;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using ABearCodes.Valheim.CraftingWithContainers.UI;
-using HarmonyLib;
+using UnityEngine;
 
-namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
+namespace ABearCodes.Valheim.CraftingWithContainers.Inventoring
 {
     public static class InventoryItemRemover
     {
         public static void IterateAndRemoveItemsFromInventories(Player player, List<TrackedContainer> containers,
-            string name, int amount, out RemovalReport report)
+            string itemName, int amount, out RemovalReport report)
         {
-            report = new RemovalReport(name, amount);
+            report = new RemovalReport(itemName, amount);
             var leftToRemove = amount;
 
             if (leftToRemove > 0 && Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
             {
-                var itemsRemoved = player.GetInventory().RemoveItemAsMuchAsPossible(name, leftToRemove);
+                var itemsRemoved = player.GetInventory().RemoveItemAsMuchAsPossible(itemName, leftToRemove);
                 leftToRemove -= itemsRemoved;
                 if (itemsRemoved > 0)
                     report.Removals.Add(new RemovalReport.RemovalReportEntry(true, null, itemsRemoved));
             }
 
-            foreach (var container in containers)
+            foreach (var tracked in containers)
             {
-                var itemsRemoved = container.Container.GetInventory().RemoveItemAsMuchAsPossible(name, leftToRemove);
+                var itemsRemoved = tracked.Container.GetInventory().RemoveItemAsMuchAsPossible(itemName, leftToRemove);
                 leftToRemove -= itemsRemoved;
                 if (itemsRemoved > 0)
-                    report.Removals.Add(new RemovalReport.RemovalReportEntry(false, container, itemsRemoved));
-
-                UpdateContainerNetworkData(player, container.Container);
+                {
+                    report.Removals.Add(new RemovalReport.RemovalReportEntry(false, tracked, itemsRemoved));
+                    UpdateContainerNetworkData(player, tracked, itemName, amount);
+                }
+                
                 if (leftToRemove == 0)
                     break;
             }
 
             if (leftToRemove > 0 && !Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
             {
-                var itemsRemoved = player.GetInventory().RemoveItemAsMuchAsPossible(name, leftToRemove);
+                var itemsRemoved = player.GetInventory().RemoveItemAsMuchAsPossible(itemName, leftToRemove);
                 leftToRemove -= itemsRemoved;
                 if (itemsRemoved > 0)
                     report.Removals.Add(new RemovalReport.RemovalReportEntry(true, null, itemsRemoved));
@@ -50,20 +52,24 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
                 Character.GetCharactersInRange(player.transform.position, Plugin.Settings.ContainerLookupRange.Value,
                     nearbyPlayers);
                 var playerCount = nearbyPlayers.Count(character => character.IsPlayer());
-                Plugin.Log.LogWarning("Invalid state reached! You might want to report this to the mod developer.\n" +
-                                      $"When removing {amount} of {name}, amount of resources left to remove was still {leftToRemove}\n" +
+                Plugin.Log.LogWarning("Invalid state reached (or dump explicitly requested)! \n" +
+                                      "You might want to report this to the mod developer.\n" +
+                                      $"When removing {amount} of {itemName}, amount of resources left to remove was still {leftToRemove}\n" +
                                       $"Containers: {containers.Count}. Players: {playerCount}.\n" +
                                       $"{report.GetReportString()}");
             }
         }
 
-        private static void UpdateContainerNetworkData(Player player, Container container)
+        private static void UpdateContainerNetworkData(Player player, TrackedContainer container, string itemName, int amount)
         {
-            var containerZNewView = (ZNetView) AccessTools.Field(typeof(Container), "m_nview").GetValue(container);
-            container.Save();
-            var containerUid = containerZNewView.GetZDO().m_uid;
-            ZDOMan.instance.ForceSendZDO(player.GetPlayerID(), containerUid);
-            containerZNewView.GetZDO().SetOwner(player.GetPlayerID());
+            if (container.ZNetView.IsOwner())
+            {
+                container.Container.Save();
+                ZDOMan.instance.ForceSendZDO(player.GetPlayerID(), container.ZNetView.GetZDO().m_uid);
+                return;
+            }
+            Debug.Log($"Sending networking notification for {itemName} {amount}");
+            container.NetworkExtension.RequestItemRemoval(player.GetPlayerID(), itemName, amount);
         }
 
         public static void RemoveFromSpecificContainer(ItemDrop.ItemData item, TrackedContainer usedContainer,
@@ -72,7 +78,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
             Plugin.Log.LogDebug(
                 $"{player.GetPlayerName()} requested removal of {item.m_shared.m_name} from {usedContainer.OwningPiece.m_name}");
             usedContainer.Container.GetInventory().RemoveItem(item, 1);
-            UpdateContainerNetworkData(player, usedContainer.Container);
+            UpdateContainerNetworkData(player, usedContainer, item.m_shared.m_name, 1);
             SpawnEffect(player, usedContainer);
         }
 
@@ -114,7 +120,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventory
 
             public string GetReportString(bool colorize = false)
             {
-                const string removedHeaderFormat = "Removed {0} \"{1}\". Touched {2} inventories\n";
+                const string removedHeaderFormat = "Removal of {0} \"{1}\" touched {2} inventories\n";
                 const string removedHeaderFormatColor =
                     "Removed <color=lightblue>{0}</color> <color=orange>\"{1}\"</color>. Touched <color=lightblue>{2}</color> inventories\n";
                 const string playerEntryFormat = "Player: {0}\n";
