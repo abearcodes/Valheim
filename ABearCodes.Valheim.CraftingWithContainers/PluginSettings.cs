@@ -11,6 +11,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
     {
         private ConfigEntry<string> _allowedContainerLookupPieceNames;
         private ConfigEntry<string> _allowedKilnFuels;
+        private ConfigEntry<string> _allowedSmelterOres;
 
         public PluginSettings(ConfigFile configFile)
         {
@@ -49,7 +50,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
             {
                 void SplitNewValueAndSetProperty()
                 {
-                    AllowedFuelsAsList = value.Value.Split(',')
+                    AllowedKilnFuelsAsList = value.Value.Split(',')
                         .Select(entry => entry.Trim())
                         .Where(entry => !string.IsNullOrEmpty(entry))
                         .ToList();
@@ -60,8 +61,28 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 SplitNewValueAndSetProperty();
             }
         }
+        public List<string> AllowedKilnFuelsAsList { get; set; }
+        private ConfigEntry<string> AllowedSmelterOres
+        {
+            get => _allowedSmelterOres;
+            set
+            {
+                void SplitNewValueAndSetProperty()
+                {
+                    AllowedSmelterOresAsList = value.Value.Split(',')
+                        .Select(entry => entry.Trim())
+                        .Where(entry => !string.IsNullOrEmpty(entry))
+                        .ToList();
+                }
 
-        public List<string> AllowedFuelsAsList { get; set; }
+                _allowedSmelterOres = value;
+                value.SettingChanged += (sender, args) => { SplitNewValueAndSetProperty(); };
+                SplitNewValueAndSetProperty();
+            }
+        }
+
+
+        public List<string> AllowedSmelterOresAsList { get; set; }
 
 
         public List<string> AllowedContainerLookupPieceNamesAsList { get; private set; }
@@ -129,7 +150,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 "Fireplaces and Hearths\n");
 
             AllowedKilnFuels = configFile.Bind("Interactions",
-                "AllowedFuels", "$item_wood",
+                "AllowedKilnFuels", "$item_wood",
                 "List of allowed fuels to be used by Kilns. If empty, will use any fuel.\n" +
                 "By default, only allows normal wood.\n" +
                 "Resources available as of 0.147.3 (use the left hand side identifier):\n" +
@@ -137,6 +158,16 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 "$item_finewood - Fine Wood\n" +
                 "$item_roundlog - Core Wood\n");
 
+            AllowedSmelterOres = configFile.Bind("Interactions",
+                "AllowedSmelterOres", "",
+                "List of allowed ores to be pulled into smelters. If empty, will use any ore.\n" +
+                "By default, allows all ores.\n" +
+                "Resources available as of 0.147.3 (use the left hand side identifier):\n" +
+                "$item_copperore - CopperOre\n" +
+                "$item_ironore - IronOre\n" +
+                "$item_ironscrap - IronScrap\n" +
+                "$item_tinore - TinOre\n" +
+                "$item_silverore - SilverOre\n");            
 
             // Filter
             ShouldFilterByContainerPieceNames = configFile.Bind("Filtering",

@@ -1,4 +1,5 @@
-﻿using ABearCodes.Valheim.CraftingWithContainers.Common;
+﻿using System.Collections.Generic;
+using ABearCodes.Valheim.CraftingWithContainers.Common;
 using ABearCodes.Valheim.CraftingWithContainers.Inventoring;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using HarmonyLib;
@@ -45,17 +46,18 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Smelting
             if (!Plugin.Settings.CraftingWithContainersEnabled.Value
                 || !Plugin.Settings.AllowTakeFuelForKilnAndFurnace.Value
                 || !user.IsPlayer()) return true;
-            // kilns only please
-            if (__instance.GetComponent<Piece>()?.m_name != "$piece_charcoalkiln") return true;
+            
             var player = (Player) user;
             var containers =
                 ContainerTracker.GetViableContainersInRangeForPlayer(player,
                     Plugin.Settings.ContainerLookupRange.Value);
             TrackedContainer? usedContainer = null;
+            
+            var filter = GetFilterForCurrentSmelter(__instance);
             if (item == null)
                 foreach (var trackedContainer in containers)
                 {
-                    var res = __instance.FindCookableItemFiltered(trackedContainer.Container.GetInventory());
+                    var res = __instance.FindCookableItemFiltered(trackedContainer.Container.GetInventory(), filter);
                     if (res == null) continue;
                     item = res;
                     usedContainer = trackedContainer;
@@ -92,6 +94,20 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Smelting
             ___m_nview.InvokeRPC("AddOre", (object) item.m_dropPrefab.name);
             __result = true;
             return false;
+        }
+
+        private static List<string> GetFilterForCurrentSmelter(Smelter smelter)
+        {
+            var pieceName = smelter.GetComponent<Piece>()?.m_name; 
+            switch (pieceName)
+            {
+                case "$piece_charcoalkiln":
+                    return Plugin.Settings.AllowedKilnFuelsAsList;
+                case "$piece_smelter":
+                    return Plugin.Settings.AllowedSmelterOresAsList;
+            }
+
+            return new List<string>();
         }
     }
 }
