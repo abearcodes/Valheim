@@ -97,6 +97,12 @@ _*for brevity, CwC stands for CraftingWithContainers further on_
 
 # Changelog
 
+### 1.0.13
+
+- fixes dupe glitch when using carts/ships/etc
+- smelters and kilns now have separate filter lists
+- build hud now shows max amount of buildables
+
 ### 1.0.12
 
 - fixes an issue that breaks crafting

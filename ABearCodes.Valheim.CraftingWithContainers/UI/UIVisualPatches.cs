@@ -40,7 +40,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.UI
                 __result = false;
                 return false;
             }
-            
+
             component3.text = string.Format($"{amount}/{num}");
             if (num < amount)
                 component3.color = (double) Mathf.Sin(Time.time * 10f) > 0.0 ? Color.red : Color.white;

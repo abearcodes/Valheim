@@ -9,7 +9,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers
 {
     [BepInPlugin("com.github.abearcodes.valheim.craftingwithcontainers",
         "Crafting with Containers",
-        "1.0.12")]
+        "1.0.13")]
     [BepInDependency("org.bepinex.plugins.valheim_plus", BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin
     {
