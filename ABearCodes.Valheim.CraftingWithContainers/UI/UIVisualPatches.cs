@@ -1,4 +1,7 @@
-﻿using HarmonyLib;
+﻿using System.Linq;
+using ABearCodes.Valheim.CraftingWithContainers.Common;
+using ABearCodes.Valheim.CraftingWithContainers.Tracking;
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,6 +48,26 @@ namespace ABearCodes.Valheim.CraftingWithContainers.UI
                 component3.color = Color.white;
             __result = true;
             return false;
+        }
+
+        [HarmonyPatch(typeof(Hud), "SetupPieceInfo", typeof(Piece))]
+        private static void Postfix(Piece piece, Text ___m_buildSelection)
+        {
+            if (!Plugin.Settings.CraftingWithContainersEnabled.Value || piece == null ||
+                piece.m_name == "$piece_repair") return;
+            var containers = ContainerTracker.GetViableContainersInRangeForPlayer(Player.m_localPlayer,
+                Plugin.Settings.ContainerLookupRange.Value);
+            var maxBuilds = piece.m_resources.Select(resource =>
+            {
+                var playerCount = Player.m_localPlayer.GetInventory()
+                    .CountItemsOriginal(resource.m_resItem.m_itemData.m_shared.m_name);
+                var containerCount = containers.Sum(container =>
+                    container.Container.GetInventory()
+                        .CountItemsOriginal(resource.m_resItem.m_itemData.m_shared.m_name));
+                return (playerCount + containerCount) / resource.m_amount;
+            }).Min();
+            ___m_buildSelection.text =
+                $"{Localization.instance.Localize(piece.m_name)} (<color=white>{maxBuilds}</color>)";
         }
     }
 }
