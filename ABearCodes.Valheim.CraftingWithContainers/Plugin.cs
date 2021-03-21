@@ -31,6 +31,12 @@ namespace ABearCodes.Valheim.CraftingWithContainers
 #endif
             _harmony = new Harmony("ABearCodes.Valheim.CraftingWithContainers");
             _harmony.PatchAll();
+            InvokeRepeating(nameof(TriggerTrackerPlayerCheck), 0f, 10f);
+        }
+
+        private void TriggerTrackerPlayerCheck()
+        {
+            ContainerTracker.ResetPlayerInventoryHashes();
         }
 
         private void LateUpdate()

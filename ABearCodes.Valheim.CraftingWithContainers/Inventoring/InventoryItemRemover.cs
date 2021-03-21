@@ -68,7 +68,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventoring
                 ZDOMan.instance.ForceSendZDO(player.GetPlayerID(), container.ZNetView.GetZDO().m_uid);
                 return;
             }
-            Debug.Log($"Sending networking notification for {itemName} {amount}");
+            Plugin.Log.LogDebug($"Sending networking notification for {itemName} {amount}");
             container.NetworkExtension.RequestItemRemoval(player.GetPlayerID(), itemName, amount);
         }
 

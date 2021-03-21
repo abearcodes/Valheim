@@ -41,7 +41,10 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
         /// </summary>
         public static void ForceScanContainers()
         {
-            var containers = Object.FindObjectsOfType<Container>();
+            _containers.Clear();
+            _networkExtensions.Clear();
+            PlayerByInventoryDict.Clear();
+            var containers = GameObject.FindObjectsOfType<Container>();
             Plugin.Log.LogDebug($"Found a total of {containers.Length} containers");
             foreach (var container in containers)
             {
@@ -63,6 +66,18 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
             foreach (var player in Player.GetAllPlayers())
                 PlayerByInventoryDict[player.GetInventory().GetHashCode()] = player;
             Plugin.Log.LogDebug($"Added {PlayerByInventoryDict.Count} players");
+        }
+
+        /// <summary>
+        /// EquipmentSlots and some other mods reset the hashes by changing the reference.
+        /// We rescan these periodically and track them.  
+        /// </summary>
+        public static void ResetPlayerInventoryHashes()
+        {
+            foreach (var player in Player.GetAllPlayers())
+            {
+                PlayerByInventoryDict[player.GetInventory().GetHashCode()] = player;
+            }
         }
     }
 
