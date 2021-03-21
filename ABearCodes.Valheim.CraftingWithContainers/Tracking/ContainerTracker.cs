@@ -67,18 +67,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
                 PlayerByInventoryDict[player.GetInventory().GetHashCode()] = player;
             Plugin.Log.LogDebug($"Added {PlayerByInventoryDict.Count} players");
         }
-
-        /// <summary>
-        /// EquipmentSlots and some other mods reset the hashes by changing the reference.
-        /// We rescan these periodically and track them.  
-        /// </summary>
-        public static void ResetPlayerInventoryHashes()
-        {
-            foreach (var player in Player.GetAllPlayers())
-            {
-                PlayerByInventoryDict[player.GetInventory().GetHashCode()] = player;
-            }
-        }
     }
 
     public readonly struct TrackedContainer

@@ -7,6 +7,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Tracking
     {
         [HarmonyPatch("Awake")]
         [HarmonyPostfix]
+        [HarmonyAfter("randyknapp.mods.equipmentandquickslots")]
         private static void Awake(Player __instance)
         {
             Plugin.Log.LogDebug(
