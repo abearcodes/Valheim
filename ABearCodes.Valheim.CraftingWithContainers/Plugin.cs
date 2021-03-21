@@ -41,7 +41,8 @@ namespace ABearCodes.Valheim.CraftingWithContainers
 
         private void LateUpdate()
         {
-            if (Input.GetKeyDown(KeyCode.F8)) ContainerTracker.ForceScanContainers();
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.F8)) 
+                ContainerTracker.ForceScanContainers();
         }
 
         private void OnDestroy()

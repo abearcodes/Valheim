@@ -26,6 +26,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventoring
                 {
                     //we don't actually remove anything. Let E&Q do the job here
                     itemsRemoved = Math.Min(player.GetInventory().CountItemsOriginal(itemName), leftToRemove);
+                    Plugin.Log.LogDebug($"EQS detected. Not taking items {itemsRemoved} from player inventory and leaving that to EQS");
                 }
                 else
                 {
