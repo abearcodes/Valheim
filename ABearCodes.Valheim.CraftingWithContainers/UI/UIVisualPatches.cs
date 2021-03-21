@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ABearCodes.Valheim.CraftingWithContainers.Common;
 using ABearCodes.Valheim.CraftingWithContainers.Tracking;
 using HarmonyLib;
@@ -65,9 +66,10 @@ namespace ABearCodes.Valheim.CraftingWithContainers.UI
                     container.Container.GetInventory()
                         .CountItemsOriginal(resource.m_resItem.m_itemData.m_shared.m_name));
                 return (playerCount + containerCount) / resource.m_amount;
-            }).Min();
+            }).AddItem(Int32.MaxValue)
+            .Min();
             ___m_buildSelection.text =
-                $"{Localization.instance.Localize(piece.m_name)} (<color=white>{maxBuilds}</color>)";
+                $"{Localization.instance.Localize(piece.m_name)} (<color=white>{(maxBuilds == int.MaxValue? "∞" : maxBuilds.ToString())}</color>)";
         }
     }
 }
