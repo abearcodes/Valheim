@@ -97,6 +97,14 @@ _*for brevity, CwC stands for CraftingWithContainers further on_
 
 # Changelog
 
+### 1.0.14
+
+- revert to old networking fix, new implementation requires all clients and server to have the mod installed 
+- smelters and kilns should now take fuel properly from the players inventory
+- using a hoe no longer error-spams 
+- workaround for Equipment&QuickSlots 2.0.0+. Crafting With Containers will now check if Equipment&QuickSlots patched the inventory and if yes, it will avoid removing the items itself and let E&QS take care of it. Not really a fix. Just a quick workaround with the time I have at hand.
+- (!) no longer supports taking items from containers first, always takes from inventory 
+
 ### 1.0.13
 
 - fixes dupe glitch when using carts/ships/etc

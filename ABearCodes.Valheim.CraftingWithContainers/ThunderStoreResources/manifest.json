@@ -1,7 +1,7 @@
 {
     "name":  "CraftingWithContainers",
     "description":  "Allows crafting by using resources in nearby chests",
-    "version_number":  "1.0.13",
+    "version_number":  "1.0.14",
     "website_url":  "https://github.com/abearcodes/Valheim",
     "dependencies":  [
                          "denikson-BepInExPack_Valheim-5.4.600"
