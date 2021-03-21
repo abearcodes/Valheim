@@ -35,6 +35,9 @@
         <Reference Include="0Harmony, Version=2.3.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\BepInEx\core\0Harmony.dll</HintPath>
         </Reference>
+        <Reference Include="0Harmony, Version=2.3.2.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\BepInEx\core\0Harmony.dll</HintPath>
+        </Reference>
         <Reference Include="assembly_googleanalytics, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>E:\Games\SteamLibrary\steamapps\common\Valheim\valheim_Data\Managed\assembly_googleanalytics.dll</HintPath>
         </Reference>
