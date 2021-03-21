@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ABearCodes.Valheim.CraftingWithContainers.Common;
@@ -13,12 +14,24 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventoring
         public static void IterateAndRemoveItemsFromInventories(Player player, List<TrackedContainer> containers,
             string itemName, int amount, out RemovalReport report)
         {
+            var useEQSWorkaround = Player.m_localPlayer.GetInventory().GetType().FullName ==
+                                   "EquipmentAndQuickSlots.ExtendedInventory";
             report = new RemovalReport(itemName, amount);
             var leftToRemove = amount;
 
-            if (leftToRemove > 0 && Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
+            if (leftToRemove > 0)
             {
-                var itemsRemoved = player.GetInventory().RemoveItemAsMuchAsPossible(itemName, leftToRemove);
+                var itemsRemoved = 0;
+                if (useEQSWorkaround)
+                {
+                    //we don't actually remove anything. Let E&Q do the job here
+                    itemsRemoved = Math.Min(player.GetInventory().CountItemsOriginal(itemName), leftToRemove);
+                }
+                else
+                {
+                    itemsRemoved = player.GetInventory().RemoveItemAsMuchAsPossible(itemName, leftToRemove);
+                }
+
                 leftToRemove -= itemsRemoved;
                 if (itemsRemoved > 0)
                     report.Removals.Add(new RemovalReport.RemovalReportEntry(true, null, itemsRemoved));
@@ -37,15 +50,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventoring
                 if (leftToRemove == 0)
                     break;
             }
-
-            if (leftToRemove > 0 && !Plugin.Settings.TakeFromPlayerInventoryFirst.Value)
-            {
-                var itemsRemoved = player.GetInventory().RemoveItemAsMuchAsPossible(itemName, leftToRemove);
-                leftToRemove -= itemsRemoved;
-                if (itemsRemoved > 0)
-                    report.Removals.Add(new RemovalReport.RemovalReportEntry(true, null, itemsRemoved));
-            }
-
+            
             if (leftToRemove != 0 || Plugin.Settings.DebugForcePrintRemovalReport.Value)
             {
                 var nearbyPlayers = new List<Character>();

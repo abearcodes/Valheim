@@ -22,8 +22,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers
 
         public ConfigEntry<float> ContainerLookupRange { get; private set; }
 
-        public ConfigEntry<bool> TakeFromPlayerInventoryFirst { get; private set; }
-
         public ConfigEntry<string> AllowedContainerLookupPieceNames
         {
             get => _allowedContainerLookupPieceNames;
@@ -111,9 +109,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers
                 "Enabled", true,
                 "Enable using resources from nearby containers.\n" +
                 "Enables/disables the main functionality of the mod");
-            TakeFromPlayerInventoryFirst = configFile.Bind("General",
-                "TakeFromPlayerInventoryFirst", false,
-                "Prioritize taking items from the players inventory when crafting");
             ContainerLookupRange = configFile.Bind("General",
                 "ContainerLookupRange", 20.0f,
                 "Range in which the mod searches for containers.\n" +

@@ -59,7 +59,6 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Inventoring
                 !ContainerTracker.PlayerByInventoryDict.TryGetValue(__instance.GetHashCode(), out var player))
             {
                 Plugin.Log.LogDebug($"Not tracked {__instance.GetHashCode()}");
-                __instance.RemoveItemOriginal(name, amount);
                 return true;
             }
             Plugin.Log.LogDebug($"player: {player.GetPlayerName()} ({player.GetInstanceID()} via {__instance.GetHashCode()})");
