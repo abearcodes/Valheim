@@ -54,7 +54,11 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Smelting
             TrackedContainer? usedContainer = null;
             
             var filter = GetFilterForCurrentSmelter(__instance);
+            if(item == null)
+                item = __instance.FindCookableItemFiltered(user.GetInventory(), filter);
             if (item == null)
+            {
+
                 foreach (var trackedContainer in containers)
                 {
                     var res = __instance.FindCookableItemFiltered(trackedContainer.Container.GetInventory(), filter);
@@ -63,6 +67,7 @@ namespace ABearCodes.Valheim.CraftingWithContainers.Smelting
                     usedContainer = trackedContainer;
                     break;
                 }
+            }
 
             Plugin.Log.LogDebug(
                 $"Found item {item?.m_shared.m_name}. Container? {usedContainer.HasValue} {usedContainer?.OwningPiece.m_name}");
