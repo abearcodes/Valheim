@@ -83,7 +83,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             if (igui.get_m_availableRecipes().Count > 0)
             {
                 if (igui.get_m_selectedRecipe().Key != null)
-                    igui.SetRecipe(igui.GetSelectedRecipeIndex(), true);
+                    igui.SetRecipe(igui.GetSelectedRecipeIndex(false), true);
                 else
                     igui.SetRecipe(0, true);
             }
@@ -185,8 +185,8 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             //todo: optimize reflection calls
             var igui = InventoryGui.instance;
             
-            var selectedRecipeIndex = igui.GetSelectedRecipeIndex();
-            if (selectedRecipeIndex != -1 && selectedRecipeIndex < _recyclingAnalysisContexts.Count)
+            var selectedRecipeIndex = igui.GetSelectedRecipeIndex(false);
+            if (selectedRecipeIndex > -1 && _recyclingAnalysisContexts.Count > 0 && selectedRecipeIndex < _recyclingAnalysisContexts.Count)
             {
                 var context = _recyclingAnalysisContexts[selectedRecipeIndex];
                 var newContext = new RecyclingAnalysisContext(context.Item);
@@ -211,7 +211,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
             }
             if (igui.get_m_selectedRecipe().Key)
             {
-                var analysisContext = _recyclingAnalysisContexts[igui.GetSelectedRecipeIndex()];
+                var analysisContext = _recyclingAnalysisContexts[igui.GetSelectedRecipeIndex(false)];
                 igui.m_recipeIcon.enabled = true;
                 igui.m_recipeName.enabled = true;
                 igui.m_recipeDecription.enabled = true;
