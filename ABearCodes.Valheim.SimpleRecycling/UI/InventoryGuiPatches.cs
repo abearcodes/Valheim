@@ -90,7 +90,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
 
         [HarmonyReversePatch]
         [HarmonyPatch(typeof(InventoryGui), "GetSelectedRecipeIndex")]
-        public static int GetSelectedRecipeIndex(this InventoryGui __instance, bool acceptOneLevelHigher = false)
+        public static int GetSelectedRecipeIndex(this InventoryGui __instance, bool acceptOneLevelHigher)
         {
             throw new NotImplementedException("stub");
         }
