@@ -1,4 +1,14 @@
-﻿# ABearCodes Valheim Mods
+# ARCHIVED / NOT SUPPORTED
+
+Hello. Due to a lack of time and disinterest with Valheim, I have not been updating the mods for close to a year at the time of writing. Thank you for using these mods while they lasted, maybe we will meet again when another interesting game comes out, or when Valheim reaches 1.0 and I have a good mod idea. 
+
+Anybody is free to fork and start maintaining the mods.
+
+If you're looking for an alternative to the crafting with containers mod, I suggest the "crafting from containers" mod on Nexus. 
+
+As for the recycling mod, I don't know if there are any other alternatives available.
+
+# ABearCodes Valheim Mods
 
 A repo for my Valheim mods
 
