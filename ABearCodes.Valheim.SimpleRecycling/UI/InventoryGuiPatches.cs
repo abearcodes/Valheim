@@ -19,7 +19,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
         {
             Plugin.RecyclingTabButtonHolder.SetInteractable(true);
             // temporary fix for compatibility with EpicLoot
-            InventoryGui.instance.UpdateCraftingPanel(false);
+            __instance.UpdateCraftingPanel(false);
         }
 
         [HarmonyPrefix]
@@ -90,7 +90,7 @@ namespace ABearCodes.Valheim.SimpleRecycling.UI
 
         [HarmonyReversePatch]
         [HarmonyPatch(typeof(InventoryGui), "GetSelectedRecipeIndex")]
-        public static int GetSelectedRecipeIndex(this InventoryGui __instance)
+        public static int GetSelectedRecipeIndex(this InventoryGui __instance, bool acceptOneLevelHigher)
         {
             throw new NotImplementedException("stub");
         }
